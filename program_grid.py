@@ -22,7 +22,7 @@ import pyautogui
 import cv2
 import pytesseract
 from functools import partial
-
+import requests
 
 class tkinterGui(Frame):
     def __init__(self, parent):
@@ -68,12 +68,12 @@ class tkinterGui(Frame):
         self.chrome_combo_ekList['values'] = (self.info[self.language]["armor_accuracy"],
                                               self.info[self.language]["armor_experience_rate"],
                                               self.info[self.language]["armor_drop_rate"],
-                                              self.info[self.language]["armor_pierce"],
+                                              #self.info[self.language]["armor_pierce"],
                                               self.info[self.language]["weapon_accuracy"],
                                               self.info[self.language]["weapon_ra_accuracy"],
                                               self.info[self.language]["weapon_ra_attack"],
                                               self.info[self.language]["weapon_weight"],
-                                              self.info[self.language]["weapon_pierce"],
+                                              #self.info[self.language]["weapon_pierce"],
                                               self.info[self.language]["pet"])
         self.get_fixes = Button(self.chrome_search_attachment, text=self.info[self.language]["show_attachment"], font=("Helvatica bold", 10),bg="purple",
                                  command=self.set_fixes)
@@ -153,7 +153,7 @@ class tkinterGui(Frame):
         self.help_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label =  self.info[self.language]["help"], menu = self.help_menu)
         self.help_menu.add_command(label = self.info[self.language]["about"], command = self.about)
-        self.help_menu.add_command(label = self.info[self.language]["check_update"], command = self.donothing)
+        self.help_menu.add_command(label = self.info[self.language]["check_update"], command = self.check_update)
 
 
         root.config(menu=self.menubar)
@@ -221,9 +221,6 @@ class tkinterGui(Frame):
 
   
         self.search_ek()
-
-
-    
     def variables(self):
         self.path = "file\\"
         self.info = configparser.ConfigParser()
@@ -291,6 +288,29 @@ class tkinterGui(Frame):
 
     def donothing(self):
         pass
+    def check_update(self):
+        if int(self.info["info"]["version"]) < 10:
+            link = self.info["info"]["update_link"]+"version_v_0"+str(int( self.info["info"]["version"])+1) + ".zip"
+        else:
+                link = self.info["info"]["update_link"]+"version_v_"+str(int( self.info["info"]["version"])+1) + ".zip"
+        print(link)
+        sorgu = requests.head(link, allow_redirects=True)
+
+        if str(sorgu) == "<Response [200]>":
+            MsgBox = messagebox.askquestion(self.info[self.language]["notice_4"], self.info[self.language]["notice_14"],
+                                        icon='warning')
+            if MsgBox ==self.info[self.language]["yes"]:
+                 if int(self.info["info"]["version"]) < 10:
+                    self.info['info']['version'] = "0"+str(int( self.info["info"]["version"])+1)
+                 else:
+                    self.info['info']['version'] = str(int( self.info["info"]["version"])+1)
+                    with open('file\config.ini', 'w') as configfile:
+                        self.info.write(configfile)
+                #and download 
+        else:
+            showinfo(self.info[self.language]["notice_4"], self.info[self.language]["notice_15"])
+
+
     def about(self):
         pass
     def change_resolition(self,resoliton):
@@ -361,7 +381,7 @@ class tkinterGui(Frame):
         self.help_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label =  self.info[self.language]["help"], menu = self.help_menu)
         self.help_menu.add_command(label = self.info[self.language]["about"], command = self.donothing)
-        self.help_menu.add_command(label = self.info[self.language]["check_update"], command = self.donothing)
+        self.help_menu.add_command(label = self.info[self.language]["check_update"], command = self.check_update)
         root.config(menu=self.menubar)
         self.parent.title("Toolbox")
         self.id.delete(0, END)
@@ -710,9 +730,6 @@ class tkinterGui(Frame):
     def delete_contacs(self):
         try:
             pass
-            # curItem = self.tree.focus()
-            # self.database.delete(self.tree.item(curItem)["values"][0])
-            # self.tree.delete(curItem)
         except:
             showinfo(self.info[self.language]["notice_4"], self.info[self.language]["notice_10"])
         self.update_contacs()
@@ -875,7 +892,7 @@ class FancyListbox(tkinter.Listbox):
     def delete_selected(self):
         MsgBox = messagebox.askquestion(self.info[self.language]["delete"], self.info[self.language]["notice_13"],
                                         icon='warning')
-        if MsgBox == 'yes':
+        if MsgBox ==self.info[self.language]["yes"]:
             for i in self.curselection()[::-1]:
                 self.database.delete(i)
 

@@ -1,10 +1,13 @@
-url = 'http://archive.nexts.live/' + "ChromeRivals_Setup.exe"
+url = 'http://archive.nexts.live/version/' + "version_v04" + ".zip"
 import requests
 
 
 r = requests.head(url, allow_redirects=True)
 
-print("---",r)
+if str(r) == "<Response [200]>":
+    print("Dosya Var")
+else:
+    print("Dosya yok")
 
 open('facebook.zip', 'wb').write(r.content)
 
