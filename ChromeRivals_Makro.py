@@ -23,6 +23,7 @@ import cv2
 import pytesseract
 from functools import partial
 import requests
+import win32api
 
 class tkinterGui(Frame):
     def __init__(self, parent):
@@ -238,15 +239,16 @@ class tkinterGui(Frame):
         self.mainFrame.grid(row=0, column=0)
 
         self.click = [False, False]
-        self.database = database()
+        self.language = self.info["info"]["language"]
+        self.resolition = self.info["info"]["resolition"]
+        self.database = database(self.info)
         self.database.create()
         self.ara = search()
         self.movement = movemont
         self.sayac = 0
         self.login = True
         
-        self.language = self.info["info"]["language"]
-        self.resolition = self.info["info"]["resolition"]
+        
 
         
 
@@ -289,24 +291,27 @@ class tkinterGui(Frame):
     def donothing(self):
         pass
     def check_update(self):
+
         if int(self.info["info"]["version"]) < 10:
             link = self.info["info"]["update_link"]+"version_v_0"+str(int( self.info["info"]["version"])+1) + ".zip"
         else:
                 link = self.info["info"]["update_link"]+"version_v_"+str(int( self.info["info"]["version"])+1) + ".zip"
-        print(link)
         sorgu = requests.head(link, allow_redirects=True)
-
-        if str(sorgu) == "<Response [200]>":
+        if sorgu.status_code == 200:
             MsgBox = messagebox.askquestion(self.info[self.language]["notice_4"], self.info[self.language]["notice_14"],
-                                        icon='warning')
-            if MsgBox ==self.info[self.language]["yes"]:
-                 if int(self.info["info"]["version"]) < 10:
+                        icon='warning')
+            if MsgBox == "yes":
+                if int(self.info["info"]["version"]) < 10:
                     self.info['info']['version'] = "0"+str(int( self.info["info"]["version"])+1)
-                 else:
+                else:
                     self.info['info']['version'] = str(int( self.info["info"]["version"])+1)
-                    with open('file\config.ini', 'w') as configfile:
-                        self.info.write(configfile)
-                #and download 
+                with open('file\config.ini', 'w') as configfile:
+                    self.info.write(configfile)
+                try: win32api.WinExec(os.getcwd() + '\\updater\\updater.exe') # Works seamlessly
+                except: pass
+
+                self.parent.destroy()
+                 
         else:
             showinfo(self.info[self.language]["notice_4"], self.info[self.language]["notice_15"])
 
@@ -316,6 +321,7 @@ class tkinterGui(Frame):
     def change_resolition(self,resoliton):
         self.resolition = resoliton
         self.info['info']['resolition'] = resoliton
+
         with open('file\config.ini', 'w') as configfile:
             self.info.write(configfile)
         self.Psilme = [self.info[self.resolition]["Psilme"].split(",")[0],self.info[self.resolition]["Psilme"].split(",")[1]] 
@@ -450,8 +456,10 @@ class tkinterGui(Frame):
        pyperclip.copy(self.uuid.get())
 
     def change_language(self,language):
-        self.info['info']['language'] = language
         self.language = language
+        self.info['info']['language'] = language
+
+
         with open('file\config.ini', 'w') as configfile:
             self.info.write(configfile)
         self.update_language()
@@ -750,10 +758,9 @@ class tkinterGui(Frame):
             self.passwd.delete(0, END)
 
 class database:
-    def __init__(self):
+    def __init__(self,info):
+        self.info = info
         self.path = "file\\"
-        self.info = configparser.ConfigParser()
-        self.info.read(self.path + "config.ini")
 
     def create(self):
         if not (os.path.exists(self.path)):
@@ -873,7 +880,7 @@ class FancyListbox(tkinter.Listbox):
         self.popup_menu.add_command(label=self.info[self.language]["delete"],
                                     command=self.delete_selected)
 
-        self.database = database()
+        self.database = database(self.info)
 
     def popup(self, event):
         try:
