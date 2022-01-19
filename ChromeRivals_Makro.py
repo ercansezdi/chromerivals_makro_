@@ -24,6 +24,7 @@ import pytesseract
 from functools import partial
 import requests
 import win32api
+import win32con 
 
 class tkinterGui(Frame):
     def __init__(self, parent):
@@ -36,7 +37,7 @@ class tkinterGui(Frame):
     def InitGui(self):
        
         self.canvas = Canvas(self.chrome_search_attachment, width=630, height=250)
-        img = ImageTk.PhotoImage(Image.open('file\chrome_wallpaper.png').resize((630, 250), Image.ANTIALIAS))  #
+        img = ImageTk.PhotoImage(Image.open('file\\png\\chrome_wallpaper.png').resize((630, 250), Image.ANTIALIAS))  #
         self.canvas.background = img  #
         bg_pic = self.canvas.create_image(0, 0, anchor=NW, image=img)
         self.canvas.grid(row=0, column=0, rowspan=630, columnspan=250)
@@ -75,8 +76,7 @@ class tkinterGui(Frame):
                                               self.info[self.language]["weapon_weight"],
                                               #self.info[self.language]["weapon_pierce"],
                                               self.info[self.language]["pet"])
-        self.get_fixes = Button(self.chrome_search_attachment, text=self.info[self.language]["show_attachment"], font=("Helvatica bold", 10),bg="purple",
-                                 command=self.set_fixes)
+        self.chrome_combo_ekList.bind("<<ComboboxSelected>>", self.set_fixes)
         self.ettac_list = Listbox(self.chrome_search_attachment,font = ("Helvatica bold", 12),selectmode='multiple')
 
         self.search_add_p = Button(self.chrome_search_attachment,text = "P>",font = ("Helvatica bold", 10),command=self.ettac_add_p)
@@ -104,6 +104,10 @@ class tkinterGui(Frame):
         self.ettac_counter_text.set(self.info[self.language]["fixes"] + " (" + str(self.ettac_counter) + ")")
 
         self.search_start_stop = Button(self.chrome_search_attachment, text= self.info[self.language]["run"],font = ("Helvatica bold", 12),command= self.ettac_check)
+
+        self.info_button = Button(self.chrome_search_attachment, image=self.info_image,command = self.open_info)
+        self.istatistik_button = Button(self.chrome_search_attachment, image=self.istatistik_image,command = self.open_statistic)
+
         self.ettac_P = Checkbutton(self.chrome_search_attachment, text="P", variable=self.checkVars_1,onvalue=1, offvalue=0)
         self.ettac_S = Checkbutton(self.chrome_search_attachment, text="S", variable=self.checkVars_2,onvalue=1, offvalue=0)
         
@@ -114,46 +118,34 @@ class tkinterGui(Frame):
         self.menubar.add_cascade(label = self.info[self.language]["apps"], menu = self.filemenu)
         self.filemenu.add_command(label = "ID-Pass", command = self.run_passworDirectory)
         self.filemenu.add_command(label = "Search", command = self.search_ek)
-        #self.filemenu.add_command(label = "Delete Item", command = self.delete_items)
+        self.filemenu.add_command(label = "Delete Item", command = self.delete_items)
         self.filemenu.add_separator()
 
         self.help_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label =  self.info[self.language]["language"], menu = self.help_menu)
-        if self.language == "turkish":
-            self.help_menu.add_command(label = ("→"+self.info["turkish"]["local_language"]+"←"), command = partial(self.change_language, "turkish"))
-        else:
-            self.help_menu.add_command(label = (self.info["turkish"]["local_language"]), command = partial(self.change_language, "turkish"))
-        if self.language == "english":
-            self.help_menu.add_command(label = "→"+self.info["english"]["local_language"]+"←", command = partial(self.change_language, "english"))
-        else:
-            self.help_menu.add_command(label = self.info["english"]["local_language"], command = partial(self.change_language, "english"))
+        for section in self.info.sections():
+            if section != "info" and (not section[0].isnumeric()):
+                if section == self.language:
+                    self.help_menu.add_command(label = ("→"+self.info[section]["local_language"]+"←"), command = partial(self.change_language, section))
+                else:
+                    self.help_menu.add_command(label = (self.info[section]["local_language"]), command = partial(self.change_language, section))
 
 
         self.resolition_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label =  self.info[self.language]["resolition"], menu = self.resolition_menu)
-
-        if self.resolition == "1920x1080":
-            self.resolition_menu.add_command(label = "→1920x1080←", command = partial(self.change_resolition, "1920x1080"))
-        else:
-            self.resolition_menu.add_command(label = "1920x1080", command = partial(self.change_resolition, "1920x1080"))
-        if self.resolition == "1600x900":
-            self.resolition_menu.add_command(label = "→1600x900←", command = partial(self.change_resolition, "1600x900"))
-        else:
-            self.resolition_menu.add_command(label = "1600x900", command = partial(self.change_resolition, "1600x900"))
-        if self.resolition == "1440x900":
-            self.resolition_menu.add_command(label = "→1440x900←", command = partial(self.change_resolition, "1440x900"))
-        else:
-            self.resolition_menu.add_command(label = "1440x900", command = partial(self.change_resolition, "1440x900"))
-        if self.resolition == "1280x800":
-             self.resolition_menu.add_command(label = "→1280x800←", command = partial(self.change_resolition, "1280x800"))
-        else:
-            self.resolition_menu.add_command(label = "1280x800", command = partial(self.change_resolition, "1280x800"))
+        for section in self.info.sections():
+            if section[0].isnumeric():
+                if self.resolition == section:
+                    self.resolition_menu.add_command(label = "→"+ section +"←", command = partial(self.change_resolition, section))
+                else:
+                    self.resolition_menu.add_command(label = section, command = partial(self.change_resolition, section))
+       
         
 
-        self.help_menu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label =  self.info[self.language]["help"], menu = self.help_menu)
-        self.help_menu.add_command(label = self.info[self.language]["about"], command = self.about)
-        self.help_menu.add_command(label = self.info[self.language]["check_update"], command = self.check_update)
+        #self.help_menu = Menu(self.menubar, tearoff=0)
+        #self.menubar.add_cascade(label =  self.info[self.language]["help"], menu = self.help_menu)
+        #self.help_menu.add_command(label = self.info[self.language]["about"], command = self.about)
+        ########################self.help_menu.add_command(label = self.info[self.language]["check_update"], command = self.check_update)########################
 
 
         root.config(menu=self.menubar)
@@ -180,47 +172,69 @@ class tkinterGui(Frame):
         self.canvas.create_window(400, 205, anchor=NW, window=self.search_add_s)
         self.canvas.create_window(425, 205, anchor=NW, window=self.search_remove_s)
 
-        self.canvas.create_window(50, 205, anchor=NW, window=self.get_fixes)
-        self.canvas.create_window(510, 205, anchor=NW, window=self.search_start_stop)
+        self.canvas.create_window(540, 205, anchor=NW, window=self.search_start_stop)
+        self.canvas.create_window(500, 205, anchor=NW, window=self.info_button)
+        self.canvas.create_window(462, 205, anchor=NW, window=self.istatistik_button)
         
                 #Dissolition and delete item
-        self.delete_item_canvas = Canvas(self.deleteItemFrame, width=310, height=100)
-        img = ImageTk.PhotoImage(Image.open('file\error.png').resize((310, 100), Image.ANTIALIAS))  #
+        self.delete_item_canvas = Canvas(self.deleteItemFrame, width=340, height=102)
+        img = ImageTk.PhotoImage(Image.open('file\\png\\error.png').resize((340, 102), Image.ANTIALIAS))  #
         self.delete_item_canvas.background = img  #
         bg_pic = self.delete_item_canvas.create_image(0, 0, anchor=NW, image=img)
-        self.delete_item_canvas.grid(row=0, column=0, rowspan=310, columnspan=100)
+        self.delete_item_canvas.grid(row=0, column=0, rowspan=340, columnspan=102)
 
         self.satir = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=5)
-        self.satir.insert(0,"Row")
+        self.satir.insert(0,self.info[self.language]["row"])
         self.sutun = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.sutun.insert(0,"Column")
+        self.sutun.insert(0,self.info[self.language]["column"])
         self.numbef_of_fragmented_item = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.numbef_of_fragmented_item.insert(0,"Number")
-        fragmented_item_button = Button(self.deleteItemFrame, text = "Dissolution", command = self.dissolution_item_func)
+        self.numbef_of_fragmented_item.insert(0,self.info[self.language]["number"])
+        self.fragmented_item_button = Button(self.deleteItemFrame, text = self.info[self.language]["dissolution_item"], command = self.dissolution_item_func)
+        
+        
 
+
+
+        
         self.satir2 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=5)
-        self.satir2.insert(0,"Row")
+        self.satir2.insert(0,self.info[self.language]["row"])
         self.sutun2 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.sutun2.insert(0,"Column")
+        self.sutun2.insert(0,self.info[self.language]["column"])
         self.numbef_of_fragmented_item2 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.numbef_of_fragmented_item2.insert(0,"Number")
-        fragmented_item_button2 = Button(self.deleteItemFrame, text = "Delete", command = self.delete_item_func)
+        self.numbef_of_fragmented_item2.insert(0,self.info[self.language]["number"])
+        self.fragmented_item_button2 = Button(self.deleteItemFrame, text = self.info[self.language]["delete_item"], command = self.delete_item_func)
 
-        y=0 
+
+        self.satir3 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=5)
+        self.satir3.insert(0,self.info[self.language]["row"])
+        self.sutun3 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
+        self.sutun3.insert(0,self.info[self.language]["column"])
+        self.numbef_of_fragmented_item3 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
+        self.numbef_of_fragmented_item3.insert(0,self.info[self.language]["number"])
+        self.fragmented_item_button3 = Button(self.deleteItemFrame, text = self.info[self.language]["smash_token"], command = self.break_a_token)
+
+        y=0
         self.delete_item_canvas.create_window(5, 5+y, anchor=NW, window=self.satir)
         self.delete_item_canvas.create_window(47, 5+y, anchor=NW, window=self.sutun)
         self.delete_item_canvas.create_window(103, 5+y, anchor=NW, window=self.numbef_of_fragmented_item)
-        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=fragmented_item_button)
+        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=self.fragmented_item_button)
         y=25
         self.delete_item_canvas.create_window(5, 5+y, anchor=NW, window=self.satir2)
         self.delete_item_canvas.create_window(47, 5+y, anchor=NW, window=self.sutun2)
         self.delete_item_canvas.create_window(103, 5+y, anchor=NW, window=self.numbef_of_fragmented_item2)
-        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=fragmented_item_button2)
+        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=self.fragmented_item_button2)
+
+        y=50
+        self.delete_item_canvas.create_window(5, 5+y, anchor=NW, window=self.satir3)
+        self.delete_item_canvas.create_window(47, 5+y, anchor=NW, window=self.sutun3)
+        self.delete_item_canvas.create_window(103, 5+y, anchor=NW, window=self.numbef_of_fragmented_item3)
+        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=self.fragmented_item_button3)
 
   
 
   
-        self.search_ek()
+        
+
     def variables(self):
         self.path = "file\\"
         self.info = configparser.ConfigParser()
@@ -240,6 +254,9 @@ class tkinterGui(Frame):
         self.click = [False, False]
         self.language = self.info["info"]["language"]
         self.resolition = self.info["info"]["resolition"]
+        self.info_image = ImageTk.PhotoImage(Image.open(self.path + 'png\\info.png').resize((25, 20), Image.ANTIALIAS))
+        self.istatistik_image = ImageTk.PhotoImage(Image.open(self.path + 'png\\istatistik.png').resize((25, 20), Image.ANTIALIAS))
+
         self.database = database(self.info)
         self.database.create()
         self.ara = search()
@@ -263,6 +280,9 @@ class tkinterGui(Frame):
         self.dissolition_accept = [int(self.info[self.resolition]["dissolition_accept"].split(",")[0]),int(self.info[self.resolition]["dissolition_accept"].split(",")[1])]
         self.dissolition_accept_v = [int(self.info[self.resolition]["dissolition_accept_v"].split(",")[0]),int(self.info[self.resolition]["dissolition_accept_v"].split(",")[1])]
         self.dissolition_panel = [int(self.info[self.resolition]["dissolition_panel"].split(",")[0]),int(self.info[self.resolition]["dissolition_panel"].split(",")[1])]
+        self.token_panel = [int(self.info[self.resolition]["token_panel"].split(",")[0]),int(self.info[self.resolition]["token_panel"].split(",")[1])]
+        self.token_start = [int(self.info[self.resolition]["token_start"].split(",")[0]),int(self.info[self.resolition]["token_start"].split(",")[1])]
+        self.token_accept = [int(self.info[self.resolition]["token_accept"].split(",")[0]),int(self.info[self.resolition]["token_accept"].split(",")[1])]
         self.islem = [False, False]
         self.var = IntVar()
         self.autoBuff_tick = False
@@ -271,34 +291,34 @@ class tkinterGui(Frame):
         self.ettac_counter_text = StringVar()
         self.ettac_counter = 0
 
-
+        
 
     def donothing(self):
         pass
     def check_update(self):
+        self.path = "file\\"
+        self.info = configparser.ConfigParser()
+        self.info.read(self.path + "config.ini")
         if int(self.info["info"]["version"]) < 10:
             link = self.info["info"]["update_link"]+"version_v_0"+str(int( self.info["info"]["version"])+1) + ".zip"
         else:
-                link = self.info["info"]["update_link"]+"version_v_"+str(int( self.info["info"]["version"])+1) + ".zip"
+            link = self.info["info"]["update_link"]+"version_v_"+str(int( self.info["info"]["version"])+1) + ".zip"
         sorgu = requests.head(link, allow_redirects=True)
         if sorgu.status_code == 200:
-            MsgBox = messagebox.askquestion(self.info[self.language]["notice_4"], self.info[self.language]["notice_14"],
-                        icon='warning')
-            if MsgBox == "yes":
-                if int(self.info["info"]["version"]) < 10:
-                    self.info['info']['version'] = "0"+str(int( self.info["info"]["version"])+1)
-                else:
-                    self.info['info']['version'] = str(int( self.info["info"]["version"])+1)
-                with open('file\\config.ini', 'w') as configfile:
-                    self.info.write(configfile)
-                try: win32api.WinExec(os.getcwd() + '\\updater\\updater.exe') # Works seamlessly
-                except: pass
 
-                self.parent.destroy()
+            if int(self.info["info"]["version"]) < 10:
+                self.info['info']['version'] = "0"+str(int( self.info["info"]["version"])+1)
+            else:
+                self.info['info']['version'] = str(int( self.info["info"]["version"])+1)
+            with open('file\\config.ini', 'w') as configfile:
+                self.info.write(configfile)
+            try: win32api.WinExec(os.getcwd() + '\\updater\\updater.exe') # Works seamlessly
+            except: pass
+
+            self.parent.destroy()
                  
         else:
-            showinfo(self.info[self.language]["notice_4"], self.info[self.language]["notice_15"])
-
+            self.search_ek()
 
     def about(self):
         pass
@@ -324,6 +344,9 @@ class tkinterGui(Frame):
         self.dissolition_accept = [int(self.info[self.resolition]["dissolition_accept"].split(",")[0]),int(self.info[self.resolition]["dissolition_accept"].split(",")[1])]
         self.dissolition_accept_v = [int(self.info[self.resolition]["dissolition_accept_v"].split(",")[0]),int(self.info[self.resolition]["dissolition_accept_v"].split(",")[1])]
         self.dissolition_panel = [int(self.info[self.resolition]["dissolition_panel"].split(",")[0]),int(self.info[self.resolition]["dissolition_panel"].split(",")[1])]
+        self.token_panel = [int(self.info[self.resolition]["token_panel"].split(",")[0]),int(self.info[self.resolition]["token_panel"].split(",")[1])]
+        self.token_start = [int(self.info[self.resolition]["token_start"].split(",")[0]),int(self.info[self.resolition]["token_start"].split(",")[1])]
+        self.token_accept = [int(self.info[self.resolition]["token_accept"].split(",")[0]),int(self.info[self.resolition]["token_accept"].split(",")[1])]
         self.update_language()
 
     def update_language(self):
@@ -338,40 +361,26 @@ class tkinterGui(Frame):
 
         self.help_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label =  self.info[self.language]["language"], menu = self.help_menu)
-        if self.language == "turkish":
-            self.help_menu.add_command(label = ("→"+self.info["turkish"]["local_language"]+"←"), command = partial(self.change_language, "turkish"))
-        else:
-            self.help_menu.add_command(label = (self.info["turkish"]["local_language"]), command = partial(self.change_language, "turkish"))
-        if self.language == "english":
-            self.help_menu.add_command(label = "→"+self.info["english"]["local_language"]+"←", command = partial(self.change_language, "english"))
-        else:
-            self.help_menu.add_command(label = self.info["english"]["local_language"], command = partial(self.change_language, "english"))
+        for section in self.info.sections():
+            if section != "info" and (not section[0].isnumeric()):
+                if section == self.language:
+                    self.help_menu.add_command(label = ("→"+self.info[section]["local_language"]+"←"), command = partial(self.change_language, section))
+                else:
+                    self.help_menu.add_command(label = (self.info[section]["local_language"]), command = partial(self.change_language, section))
 
         self.resolition_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label =  self.info[self.language]["resolition"], menu = self.resolition_menu)
-        if self.resolition == "1920x1080":
-            self.resolition_menu.add_command(label = "→1920x1080←", command = partial(self.change_resolition, "1920x1080"))
-        else:
-            self.resolition_menu.add_command(label = "1920x1080", command = partial(self.change_resolition, "1920x1080"))
+        for section in self.info.sections():
+            if section[0].isnumeric():
+                if self.resolition == section:
+                    self.resolition_menu.add_command(label = "→"+ section +"←", command = partial(self.change_resolition, section))
+                else:
+                    self.resolition_menu.add_command(label = section, command = partial(self.change_resolition, section))
 
-        if self.resolition == "1600x900":
-            self.resolition_menu.add_command(label = "→1600x900←", command = partial(self.change_resolition, "1600x900"))
-        else:
-            self.resolition_menu.add_command(label = "1600x900", command = partial(self.change_resolition, "1600x900"))
-
-        if self.resolition == "1440x900":
-            self.resolition_menu.add_command(label = "→1440x900←", command = partial(self.change_resolition, "1440x900"))
-        else:
-            self.resolition_menu.add_command(label = "1440x900", command = partial(self.change_resolition, "1440x900"))
-        if self.resolition == "1280x800":
-             self.resolition_menu.add_command(label = "→1280x800←", command = partial(self.change_resolition, "1280x800"))
-        else:
-            self.resolition_menu.add_command(label = "1280x800", command = partial(self.change_resolition, "1280x800"))
-
-        self.help_menu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label =  self.info[self.language]["help"], menu = self.help_menu)
-        self.help_menu.add_command(label = self.info[self.language]["about"], command = self.donothing)
-        self.help_menu.add_command(label = self.info[self.language]["check_update"], command = self.check_update)
+        #self.help_menu = Menu(self.menubar, tearoff=0)
+        #self.menubar.add_cascade(label =  self.info[self.language]["help"], menu = self.help_menu)
+        #self.help_menu.add_command(label = self.info[self.language]["about"], command = self.open_help)
+        ########################self.help_menu.add_command(label = self.info[self.language]["check_update"], command = self.check_update)########################
         root.config(menu=self.menubar)
         self.parent.title("Toolbox")
         self.id.delete(0, END)
@@ -383,15 +392,14 @@ class tkinterGui(Frame):
         self.chrome_combo_ekList['values'] = (self.info[self.language]["armor_accuracy"],
                                               self.info[self.language]["armor_experience_rate"],
                                               self.info[self.language]["armor_drop_rate"],
-                                              self.info[self.language]["armor_pierce"],
+                                              #self.info[self.language]["armor_pierce"],
                                               self.info[self.language]["weapon_accuracy"],
                                               self.info[self.language]["weapon_ra_accuracy"],
                                               self.info[self.language]["weapon_ra_attack"],
                                               self.info[self.language]["weapon_weight"],
-                                              self.info[self.language]["weapon_pierce"],
+                                              #self.info[self.language]["weapon_pierce"],
                                               self.info[self.language]["pet"])
       
-        self.get_fixes.config(text = self.info[self.language]["show_attachment"])
         
 
         self.search_ettac_list_name.config(text = self.info[self.language]["prefixes_to_search"])
@@ -399,26 +407,74 @@ class tkinterGui(Frame):
         self.ettac_counter_text.set(self.info[self.language]["fixes"] + " (" + str(self.ettac_counter) + ")")
 
         self.search_start_stop.config(text= self.info[self.language]["run"])
+        self.fragmented_item_button.config(text= self.info[self.language]["dissolution_item"])
+        self.fragmented_item_button2.config(text= self.info[self.language]["delete_item"])
+        self.fragmented_item_button3.config(text= self.info[self.language]["smash_token"])
+
+
+        self.satir.delete(0,END)
+        self.sutun.delete(0,END)
+        self.numbef_of_fragmented_item.delete(0,END)
+        self.satir2.delete(0,END)
+        self.sutun2.delete(0,END)
+        self.numbef_of_fragmented_item2.delete(0,END)
+        self.satir3.delete(0,END)
+        self.sutun3.delete(0,END)
+        self.numbef_of_fragmented_item3.delete(0,END)
+
+
+        self.satir.insert(0,self.info[self.language]["row"])
+        self.sutun.insert(0,self.info[self.language]["column"])
+        self.numbef_of_fragmented_item.insert(0,self.info[self.language]["number"])
+        self.satir2.insert(0,self.info[self.language]["row"])
+        self.sutun2.insert(0,self.info[self.language]["column"])
+        self.numbef_of_fragmented_item2.insert(0,self.info[self.language]["number"])
+        self.satir3.insert(0,self.info[self.language]["row"])
+        self.sutun3.insert(0,self.info[self.language]["column"])
+        self.numbef_of_fragmented_item3.insert(0,self.info[self.language]["number"])
     def loading_screen(self):
-        self.loading_canvas = Canvas(self.loading_frame, width=310, height=100)
-        img = ImageTk.PhotoImage(Image.open('file\error.png').resize((310, 100), Image.ANTIALIAS))  #
+        self.loading_canvas = Canvas(self.loading_frame, width=310, height=120)
+        img = ImageTk.PhotoImage(Image.open('file\\png\\new_error.png').resize((310, 120), Image.ANTIALIAS))  #
         self.loading_canvas.background = img  #
         bg_pic = self.loading_canvas.create_image(0, 0, anchor=NW, image=img)
-        self.loading_canvas.grid(row=0, column=0, rowspan=310, columnspan=100)
+        self.loading_canvas.grid(row=0, column=0, rowspan=310, columnspan=120)
         progress = ttk.Progressbar(self.loading_canvas, orient = HORIZONTAL,length = 250, mode = 'determinate')
         percent_text = Label(self.loading_frame, textvariable= self.percent_textvar, font =("Helvatica",12))
         uuid = Label(self.loading_frame, textvariable= self.uuid, font =("Helvatica",12))
         copy = Button(self.loading_frame, text=  self.info[self.language]["copy"], font =("Helvatica",10),command=self.copy_uuid)
         warning1 = Label(self.loading_frame, text=  self.info[self.language]["notice_1"], font =("Helvatica",12))
         warning2 = Label(self.loading_frame, text=  self.info[self.language]["notice_2"], font =("Helvatica",12))
+
+        self.code = Text(self.loading_frame, height=1.25, width=35)
+        self.send = Button(self.loading_frame, text=  self.info[self.language]["send"],command=self.test_version)
         if self.return_mongodb():
             self.loading_variables_destroy()
         else:
-            self.parent.geometry("310x100")
+            self.parent.geometry("310x120")
             self.loading_canvas.create_window(10, 10, anchor=NW, window=warning1)
             self.loading_canvas.create_window(10, 35, anchor=NW, window=warning2)
             self.loading_canvas.create_window(260, 60, anchor=NW, window=copy)
             self.loading_canvas.create_window(10, 60, anchor=NW, window=uuid)
+            self.loading_canvas.create_window(10, 85, anchor=NW, window=self.code)
+            self.lisance_button = self.loading_canvas.create_window(230, 85, anchor=NW, window=self.send)
+    def test_version(self):
+        self.loading_canvas.delete(self.lisance_button)
+        showinfo( self.info[self.language]["notice_4"],  self.info[self.language]["lisance_check"])
+        treading = threading.Thread(target=self.test_version_check)
+        treading.start()
+    def test_version_check(self):
+        self.client = pymongo.MongoClient(
+            "mongodb+srv://bosstimer:timerboss@cluster0.zxtp6.mongodb.net/Cluster0?retryWrites=true&w=majority")
+        conn = self.client["UUID"]
+        db = conn['uuids']
+        uuid = str(db.find_one({self.code.get("1.0","end").strip():"True"}))
+        if uuid == "None":
+            self.lisance_button = self.loading_canvas.create_window(230, 85, anchor=NW, window=self.send)
+            showinfo( self.info[self.language]["notice_4"],  self.info[self.language]["invalid_license"])
+        else:
+            self.loading_variables_destroy()
+            self.search_ek()
+
     def loading_variables_set(self):
         self.parent.geometry("700x300")
         self.loading_frame = Frame(self.parent)
@@ -431,14 +487,50 @@ class tkinterGui(Frame):
         self.variables()
         self.loading_screen()
     def loading_variables_destroy(self):
+        
         self.parent.geometry("147x197")
         self.loading_frame.grid_remove()
-        self.variables()
         self.InitGui()
+        #self.check_update()
+    def open_help(self):
+        pass
+    def open_info(self):
+        popup= Toplevel(root)
+        popup.geometry("720x735")
+        popup.title("Sample Inventory Lineup")
+        canvas = Canvas(popup, width=720, height=735)
+        img = ImageTk.PhotoImage(Image.open('file\\png\\dizilim.png').resize((720, 735), Image.ANTIALIAS))  #
+        canvas.background = img  #
+        bg_pic = canvas.create_image(0, 0, anchor=NW, image=img)
+        canvas.grid(row=0, column=0, rowspan=720, columnspan=735)
+        
+    def open_statistic(self):
+        popup= Toplevel(root)
+        popup.geometry("415x235")
+        popup.title("Incoming Attachment Statistics")
+        canvas = Canvas(popup, width=720, height=735)
+        img = ImageTk.PhotoImage(Image.open('file\\png\\bg.png').resize((720, 735), Image.ANTIALIAS))  #
+        canvas.background = img  #
+        canvas.grid(row=0, column=0, rowspan=720, columnspan=735)
+
+        columns = ("ek_adi", "sayisi")
+        tree = ttk.Treeview(popup, columns=columns, show='headings')
+        tree.heading('ek_adi', text=self.info[self.language]['ek_adi'], anchor='center')
+        tree.heading('sayisi', text=self.info[self.language]['number'], anchor='center')
+        tree.column("ek_adi", anchor='center')
+        tree.column("sayisi", anchor='center')
+        data = self.database.return_statistics()
+        for contact in data:
+            tree.insert('', END, values=contact)
+
+
+
+        canvas.create_window(5, 5, anchor=NW, window=tree)
+
+        
     def copy_uuid(self):
 
        pyperclip.copy(self.uuid.get())
-
     def change_language(self,language):
         self.language = language
        
@@ -448,6 +540,69 @@ class tkinterGui(Frame):
         with open('file\\config.ini', 'w') as configfile:
             self.info.write(configfile)
         self.update_language()
+    def break_a_token(self):
+        if self.satir3.get().isnumeric() and self.sutun3.get().isnumeric() and self.numbef_of_fragmented_item3.get().isnumeric():
+            satir = int(self.satir3.get())
+            sutun = int(self.sutun3.get())
+            number = int(self.numbef_of_fragmented_item3.get())
+            exit = True
+            for i in range(0,number):
+                if exit:
+                    self.movement.move(self.row1_column1_disp[0] +(sutun -1)*32,self.row1_column1_disp[1] + (satir-1)*32)
+                    sleep(0.1)
+                    self.movement.scroll_up()
+                    sleep(0.5)
+                    self.movement.click_move(self.row1_column1_disp[0] +(sutun -1)*32,self.row1_column1_disp[1] + (satir-1)*32,self.token_panel[0],self.token_panel[1])
+                    sleep(0.1)
+                    self.movement.move(self.token_start[0],self.token_start[1])
+                    self.movement.click_button()
+                    sleep(4.5)
+                    self.movement.move(self.token_accept[0],self.token_accept[1])
+                    self.movement.click_button()
+                    if keyboard.is_pressed('space'):
+                        exit = False
+    def dissolution_item_func(self):
+        
+        if self.satir.get().isnumeric() and self.sutun.get().isnumeric() and self.numbef_of_fragmented_item.get().isnumeric():
+            satir = int(self.satir.get())
+            sutun = int(self.sutun.get())
+            number = int(self.numbef_of_fragmented_item.get())
+            exit = True
+            for i in range(0,number):
+                if exit:
+                    self.movement.click_move(self.row1_column1_disp[0] +(sutun -1)*32,self.row1_column1_disp[1] + (satir-1)*32,self.dissolition_panel[0],self.dissolition_panel[1])
+                    sleep(0.1)
+                    self.movement.move(self.dissolition_accept[0],self.dissolition_accept[1])
+                    self.movement.click_button()
+                    sleep(2)
+                    self.movement.move(self.dissolition_accept_v[0],self.dissolition_accept_v[1])
+                    self.movement.click_button()
+                    if keyboard.is_pressed('space'):
+                        exit = False                         
+    def delete_item_func(self):
+        if self.satir2.get().isnumeric() and self.sutun2.get().isnumeric() and self.numbef_of_fragmented_item2.get().isnumeric():
+            satir = int(self.satir2.get())
+            sutun = int(self.sutun2.get())
+            number = int(self.numbef_of_fragmented_item2.get())
+            exit = True
+            for i in range(0,number) :
+                if exit:
+                    self.movement.scroll_up()
+                    self.movement.move(self.row1_column1[0] +(sutun -1)*32,self.row1_column1[1] + (satir-1)*32)
+                    sleep(0.1)
+                    self.movement.click_move(self.row1_column1[0] +(sutun -1)*32,self.row1_column1[1] + (satir-1)*32,self.trash[0],self.trash[1])
+                    self.movement.move(self.trash_all_accept[0],self.trash_all_accept[1])
+                    sleep(0.1)
+                    self.movement.click_button()
+                    self.movement.click_button()
+                    self.movement.move(self.trash_accept[0],self.trash_accept[1])
+                    sleep(0.1)
+                    self.movement.click_button()
+                    self.movement.move(self.trash_accept[0],self.trash_accept[1]-5)
+                    sleep(0.1)
+                    self.movement.click_button()
+                    if keyboard.is_pressed('space'):
+                        exit = False
     def return_mongodb(self):
 
         self.client = pymongo.MongoClient(
@@ -464,38 +619,10 @@ class tkinterGui(Frame):
     def delete_items(self):
         self.remove_all_frame()
         self.parent.title( self.info[self.language]["notice_9"])
+        self.parent.geometry()
+        self.parent.geometry("340x102")
         self.deleteItemFrame.grid(row=0,column=0)
-    def dissolution_item_func(self):
-        
-        if self.satir.get().isnumeric() and self.sutun.get().isnumeric() and self.numbef_of_fragmented_item.get().isnumeric():
-            satir = int(self.satir.get())
-            sutun = int(self.sutun.get())
-            number = int(self.numbef_of_fragmented_item.get())
-            for i in range(0,number):
-                self.movement.click_move(self.row1_column1_disp[0] +(sutun -1)*32,self.row1_column1_disp[1] + (satir-1)*32,self.dissolition_panel[0],self.dissolition_panel[1])
-                sleep(0.1)
-                self.movement.move(self.dissolition_accept[0],self.dissolition_accept[1])
-                self.movement.click_button()
-                sleep(1)
-                self.movement.move(self.dissolition_accept_v[0],self.dissolition_accept_v[1])
-                self.movement.click_button()                                   
-    def delete_item_func(self):
-        if self.satir2.get().isnumeric() and self.sutun2.get().isnumeric() and self.numbef_of_fragmented_item2.get().isnumeric():
-            satir = int(self.satir2.get())
-            sutun = int(self.sutun2.get())
-            number = int(self.numbef_of_fragmented_item2.get())
-            for i in range(0,number):
-
-                self.movement.click_move(self.row1_column1[0] +(sutun -1)*32,self.row1_column1[1] + (satir-1)*32,self.trash[0],self.trash[1])
-                self.movement.move(self.trash_all_accept[0],self.trash_all_accept[1])
-                self.movement.click_button()
-                self.movement.click_button()
-                self.movement.move(self.trash_accept[0],self.trash_accept[1])
-                self.movement.click_button()
-                self.movement.move(self.trash_accept[0],self.trash_accept[1]-5)
-                self.movement.click_button()
-                sleep(0.1)
-    def set_fixes(self):
+    def set_fixes(self,_):
         ek_name = self.chrome_combo_ekList.get()
         attachments = self.database.return_attachments_list(ek_name)
         for i in range(0,self.ettac_list.size()):
@@ -557,8 +684,12 @@ class tkinterGui(Frame):
 
         cikma_sarti = [True,True]
         exit = False
-
-        if int(self.number_of_ettac_P.get()) < int(self.number_of_ettac_S.get()):
+        if self.checkVars_1.get() == 1 and self.checkVars_2.get() == 1:
+            if int(self.number_of_ettac_P.get()) < int(self.number_of_ettac_S.get()):
+                max_ek_sayisi = int(self.number_of_ettac_S.get())
+            else:
+                max_ek_sayisi = int(self.number_of_ettac_P.get())
+        elif self.checkVars_1.get() == 0 and self.checkVars_2.get() == 1:
             max_ek_sayisi = int(self.number_of_ettac_S.get())
         else:
             max_ek_sayisi = int(self.number_of_ettac_P.get())
@@ -570,29 +701,38 @@ class tkinterGui(Frame):
                     self.ara.screenshoot()
                     self.ara.crop_image()
                     name = self.ara.read_text("P")
+                    if "'" in name:
+                        name = name.strip("'")
+                    self.database.update_statistics(name)
                     if name in on_aranan_ekler:
                         if self.ettac_counter < 11:
                             self.coming_ettac_list.insert("end", "(P) " + name)
                         cikma_sarti[0] = False
                     else:
                         self.coming_ettac_list.insert("end", "(P) " + name)
+                        self.search_ettac_list_name.config(text = self.info[self.language]["prefixes_to_search"]+ "(" + str(self.ettac_counter+1) + ")")
+                        
                         self.ek_sil("P")
                 if cikma_sarti[1]:
                     self.ek_bas("S")
                     self.ara.screenshoot()
                     self.ara.crop_image()
                     name = self.ara.read_text("S")
+                    if "'" in name:
+                        name = name.strip("'")
+                    self.database.update_statistics(name)
                     if name in on_aranan_ekler:
                         if self.ettac_counter < 11:
                             self.coming_ettac_list.insert("end", "(S) " + name)
                         cikma_sarti[1] = False
                     else:
                         self.coming_ettac_list.insert("end", "(S) " + name)
+                        self.search_ettac_list_name_s.config(text = self.info[self.language]["suffix_to_search"]+ "(" + str(self.ettac_counter+1) + ")")
                         self.ek_sil("S")
 
                 self.ettac_counter += 1
                 counter += 1
-                self.ettac_counter_text.set(self.info[self.language]["fixes"] + "(" + str(self.ettac_counter) + ")")
+                self.ettac_counter_text.set(self.info[self.language]["fixes"] + "(" + str(self.ettac_counter+1) + ")")
                 if int(self.number_of_ettac_P.get()) <= self.ettac_counter:
                     cikma_sarti[0] = False
                 if int(self.number_of_ettac_S.get()) <= self.ettac_counter:
@@ -608,11 +748,17 @@ class tkinterGui(Frame):
                     self.ara.screenshoot()
                     self.ara.crop_image()
                     name = self.ara.read_text("P")
+                    if "'" in name:
+                        name = name.strip("'")
+                    self.database.update_statistics(name)
                     self.coming_ettac_list.insert("end", "(P) "+name)
+                    if "'" in name:
+                        name = name.strip("'")
                     if name in on_aranan_ekler:
                         exit = True
                     else:
                         self.ettac_counter += 1 
+                        self.search_ettac_list_name.config(text = self.info[self.language]["prefixes_to_search"]+ "(" + str(self.ettac_counter+1) + ")")
                         self.ettac_counter_text.set(self.info[self.language]["fixes"] + "(" + str(self.ettac_counter) + ")")
                         self.ek_sil("P")
                 else:
@@ -620,11 +766,17 @@ class tkinterGui(Frame):
                     self.ara.screenshoot()
                     self.ara.crop_image()
                     name = self.ara.read_text("S")
+                    if "'" in name:
+                        name = name.strip("'")
+                    self.database.update_statistics(name)
                     self.coming_ettac_list.insert("end", "(S) "+name)
+                    if "'" in name:
+                        name = name.strip("'")
                     if name in son_aranan_ekler:
                         exit = True
                     else:
-                        self.ettac_counter += 1 
+                        self.ettac_counter += 1
+                        self.search_ettac_list_name_s.config(text = self.info[self.language]["suffix_to_search"]+ "(" + str(self.ettac_counter+1) + ")")
                         self.ettac_counter_text.set(self.info[self.language]["fixes"] + "(" + str(self.ettac_counter) + ")")
                         self.ek_sil("P")
 
@@ -733,13 +885,13 @@ class tkinterGui(Frame):
         self.click = [True, False]
         if str(self.passwd.get()) == "":
             self.passwd.insert(0, self.info[self.language]["passwd"])
-        if str(self.id.get()) == self.info["english"]["username"] or str(self.id.get()) == self.info["turkish"]["username"]:
+        if str(self.id.get()) == self.info["english"]["username"] or str(self.id.get()) == self.info["turkish"]["username"] or str(self.id.get()) == self.info["german"]["username"]:
             self.id.delete(0, END)
     def clear_directory_passwd(self, _):
         self.click = [False, True]
         if str(self.id.get()) == "":
             self.id.insert(0, self.info[self.language]["username"])
-        if str(self.passwd.get()) ==self.info["english"]["passwd"] or str(self.passwd.get()) == self.info["turkish"]["passwd"]:
+        if str(self.passwd.get()) ==self.info["english"]["passwd"] or str(self.passwd.get()) == self.info["turkish"]["passwd"] or str(self.passwd.get()) == self.info["german"]["passwd"]:
             self.passwd.delete(0, END)
 
 class database:
@@ -760,48 +912,90 @@ class database:
             baglan.commit()
             baglan.close()
 
-        if not (os.path.isfile(self.path + self.info["info"]["databaseName_config"])):
-            baglan = sqlite3.connect(self.path + self.info["info"]["databaseName_config"])
+
+        if not (os.path.isfile(self.path + self.info["info"]["attachments_statistics"])):
+            baglan = sqlite3.connect(self.path + self.info["info"]["attachments_statistics"])
             veri = baglan.cursor()
-            veri.execute("""CREATE TABLE {} ('delay'	TEXT);""".format("config"))
+            veri.execute("""CREATE TABLE {} (
+                                            'attachments_name'	TEXT UNIQUE,
+                                            'counter'	TEXT,
+                                            PRIMARY KEY(attachments_name));""".format("attachments"))
             baglan.commit()
             baglan.close()
+            self.create_statistics()
+        else:
+            pass
+    def update_statistics(self,ek_name):
+        baglan = sqlite3.connect(self.path + self.info["info"]["attachments_statistics"])
+        veri = baglan.cursor()
+        rows = veri.execute("SELECT * FROM attachments WHERE attachments_name=?", (ek_name,)).fetchone()
+        if rows != None:
+            sql = ''' UPDATE attachments
+                      SET counter = ?
+                  WHERE attachments_name = ?'''
+            veri.execute(sql, ( str(int(rows[1])+1), ek_name))
         else:
             pass
 
-    def update_config(self, time):
-        baglan = sqlite3.connect(self.path + self.info["info"]["databaseName_config"])
-        veri = baglan.cursor()
-
-        veri.execute("INSERT INTO config VALUES(" + time + ")")
         baglan.commit()
         baglan.close()
-
+    def return_statistics(self):
+        baglan = sqlite3.connect(self.path + self.info["info"]["attachments_statistics"])
+        veri = baglan.cursor()
+        values = veri.execute("select * from attachments").fetchall()
+        baglan.commit()
+        baglan.close()
+        return values
+    def create_statistics(self):
+        attachments = []
+        for i in range(15972,15981):
+            if not i in (15979,15980):
+                attachments.append(str(i)+".db")
+        
+        baglan = sqlite3.connect(self.path + self.info["info"]["attachments_statistics"])
+        veri = baglan.cursor()
+        for name in attachments:
+            ekler = sqlite3.connect("file\\" + name)
+            data = ekler.cursor()
+            values = data.execute("select * from attachments_list").fetchall()
+            for atchet in values:
+                veri.execute("INSERT INTO attachments (attachments_name, counter) VALUES (?,?)", (atchet[0], "0"))
+        ekler.commit()
+        ekler.close()
+        baglan.commit()
+        baglan.close()
     def return_config_time(self):
         baglan = sqlite3.connect(self.path + self.info["info"]["databaseName_config"])
         veri = baglan.cursor()
         values = veri.execute("select * from config").fetchall()
         return values[-1][0]
-
+    def return_attachments_statistics(self):
+        baglan = sqlite3.connect(self.path + self.info["info"]["databaseName_config"])
+        veri = baglan.cursor()
+        values = veri.execute("select * from attachments_list").fetchall()
+        array = []
+        for i in values:
+            array.append(i)
+        return array
     def return_attachments_list(self,ek_name):
 
-        if ek_name == self.info["turkish"]["armor_accuracy"] or ek_name == self.info["english"]["armor_accuracy"]:
+        if ek_name == self.info["turkish"]["armor_accuracy"] or ek_name == self.info["english"]["armor_accuracy"] or ek_name == self.info["german"]["armor_accuracy"]:
             name = "15972.db"
-        elif ek_name == self.info["turkish"]["armor_experience_rate"] or ek_name == self.info["english"]["armor_experience_rate"]:
+        elif ek_name == self.info["turkish"]["armor_experience_rate"] or ek_name == self.info["english"]["armor_experience_rate"] or ek_name == self.info["german"]["armor_experience_rate"]:
             name = "15973.db"
-        elif ek_name == self.info["turkish"]["armor_drop_rate"] or ek_name == self.info["english"]["armor_drop_rate"] :
+        elif ek_name == self.info["turkish"]["armor_drop_rate"] or ek_name == self.info["english"]["armor_drop_rate"] or ek_name == self.info["german"]["armor_drop_rate"]:
             name = "15978.db"
-        elif ek_name == self.info["turkish"]["armor_pierce"] or ek_name == self.info["english"]["armor_pierce"]:
+        elif ek_name == self.info["turkish"]["armor_pierce"] or ek_name == self.info["english"]["armor_pierce"] or ek_name == self.info["german"]["armor_pierce"]:
             name = "15979.db"
-        elif ek_name == self.info["turkish"]["weapon_ra_accuracy"] or ek_name == self.info["english"]["weapon_ra_accuracy"]:
+        elif ek_name == self.info["turkish"]["weapon_ra_accuracy"] or ek_name == self.info["english"]["weapon_ra_accuracy"] or ek_name == self.info["german"]["weapon_ra_accuracy"]:
             name = "15971.db"
-        elif ek_name == self.info["turkish"]["weapon_accuracy"] or ek_name == self.info["english"]["weapon_accuracy"]:
+        elif ek_name == self.info["turkish"]["weapon_accuracy"] or ek_name == self.info["english"]["weapon_accuracy"] or  ek_name == self.info["german"]["weapon_accuracy"]:
             name = "15976.db"
-        elif ek_name == self.info["turkish"]["weapon_ra_attack"] or ek_name == self.info["english"]["weapon_ra_attack"]:
+        elif ek_name == self.info["turkish"]["weapon_ra_attack"] or ek_name == self.info["english"]["weapon_ra_attack"] or ek_name == self.info["german"]["weapon_ra_attack"]:
             name = "15977.db"
-        elif ek_name == self.info["turkish"]["weapon_weight"] or ek_name == self.info["english"]["weapon_weight"] :
+        elif ek_name == self.info["turkish"]["weapon_weight"] or ek_name == self.info["english"]["weapon_weight"] or ek_name == self.info["german"]["weapon_weight"] :
             name = "15975.db"
-        elif ek_name == self.info["turkish"]["weapon_pierce"] or ek_name == self.info["english"]["weapon_pierce"]:
+        elif ek_name == self.info["turkish"]["weapon_pierce"] or ek_name == self.info["english"]["weapon_pierce"] or ek_name == self.info["german"]["weapon_pierce"]:
             name = "15980.db"
         else:
             name = "15974.db"
@@ -907,10 +1101,14 @@ class movemont:
         ctypes.windll.user32.mouse_event(2, 0, 0, 0, 0)
         ctypes.windll.user32.SetCursorPos(x2, y2)
         ctypes.windll.user32.mouse_event(4, 0, 0, 0, 0)
+
     def queryMousePosition():
         pt = POINT()
         windll.user32.GetCursorPos(byref(pt))
         return { "x": pt.x, "y": pt.y}
+    def scroll_up():
+        for _ in range(abs(60)):
+            win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, win32con.WHEEL_DELTA, 0)
 
 class search:
     def screenshoot(self):

@@ -1,4 +1,7 @@
-import win32api # if active state python is installed or install pywin32 package seperately
+import sqlite3
 
-try: win32api.WinExec('C:\\Users\\ercan\\Desktop\\test_\\update\\dist\\update_func\\updater.exe') # Works seamlessly
-except: pass
+
+baglan = sqlite3.connect("file\\attachments.db")
+veri = baglan.cursor()
+rows = veri.execute("SELECT * FROM attachments WHERE attachments_name=?", ("Ose",)).fetchone()
+print(rows[1])

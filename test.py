@@ -39,6 +39,7 @@ class tkinterGui(Frame):
         Frame.__init__(self, parent)
         self.parent = parent
         self.parent.title("ToolBox")
+        
         self.gui()
 
 
@@ -60,11 +61,12 @@ class tkinterGui(Frame):
         self.token_panel = [1200,780]
         self.token_start = [1170,840]
         self.token_accept = [1240,840]
+
         self.trash = [1090,765] # trash icon
 
         self.deleteItemFrame = Frame(self.parent)
         self.deleteItemFrame.grid(row=0,column=0)
-        self.parent.geometry("500x500")
+        self.parent.geometry("300x100")
 
 
         self.delete_item_canvas = Canvas(self.deleteItemFrame, width=310, height=100)
