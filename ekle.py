@@ -7,6 +7,6 @@ db = conn['uuids']
 
 
 
-uuids = "DD24D3B0-C533-4760-A447-0203007BE85B"
+uuids = "03000200-0400-0500-0006-000700080009"
 
-db.insert_one({uuids:"True","test":"test"})
+db.insert_one({uuids:"True","Akeneton":"Memoli"})
