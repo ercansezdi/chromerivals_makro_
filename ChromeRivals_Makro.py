@@ -1,13 +1,14 @@
 #!/usr/bin/env python
  # -*- coding: utf-8 -*-
+
+import datetime
+from time import sleep,strftime
 from tkinter import *
 import threading
 from tkinter.messagebox import showinfo
 import os
 import tkinter.ttk
 from tkinter import ttk
-import datetime
-from time import sleep
 import sqlite3
 import configparser
 from tkinter import messagebox
@@ -17,14 +18,15 @@ import pyperclip
 from PIL import Image, ImageTk, ImageFont, ImageDraw
 import keyboard
 import ctypes
-import pymongo
 import pyautogui
 import cv2
 import pytesseract
 from functools import partial
 import requests
+import json
 import win32api
 import win32con 
+
 
 class tkinterGui(Frame):
     def __init__(self, parent):
@@ -35,83 +37,8 @@ class tkinterGui(Frame):
         self.loading_variables_set()
         
     def InitGui(self):
-       
-        self.canvas = Canvas(self.chrome_search_attachment, width=630, height=250)
-        img = ImageTk.PhotoImage(Image.open('file\\png\\chrome_wallpaper.png').resize((630, 250), Image.ANTIALIAS))  #
-        self.canvas.background = img  #
-        bg_pic = self.canvas.create_image(0, 0, anchor=NW, image=img)
-        self.canvas.grid(row=0, column=0, rowspan=630, columnspan=250)
-
-        self.treeBox = FancyListbox(self.idPasswd, font=("Helvatica bold", 12), justify=CENTER)
-        self.treeBox.grid(row=0, column=0, rowspan=4, columnspan=1, ipady=40)
-        self.treeBox_id = FancyListbox(self.idPasswd, font=("Helvatica bold", 12), justify=CENTER)
-        self.treeBox_id.grid(row=0, column=1, rowspan=4, columnspan=2, ipadx=50, ipady=40)
-        self.treeBox_passwd = FancyListbox(self.idPasswd, font=("Helvatica bold", 12), justify=CENTER)
-        self.treeBox_passwd.grid(row=0, column=3, rowspan=4, columnspan=3, ipadx=50, ipady=40)
-        self.id = Entry(self.idPasswd, font="Helvatica 12 bold")
-        self.id.grid(row=4, column=0, columnspan=2, ipadx=50, padx=1)
-        self.id.insert(0, self.config.return_read(self.info_path,self.language,"username"))
-        self.id.bind("<Button-1>", self.clear_directory_id)
-        self.passwd = Entry(self.idPasswd, font="Helvatica 12 bold")
-        self.passwd.grid(row=4, column=2, columnspan=2, ipadx=50)
-        self.passwd.insert(0, self.config.return_read(self.info_path,self.language,"passwd"))
-        self.passwd.bind("<Button-1>", self.clear_directory_passwd)
-
-        self.add = Button(self.idPasswd, text=self.config.return_read(self.info_path,self.language,"add"), command=self.add_data)
-        self.add.grid(row=4, column=4, ipadx=20, pady=2)
-
-
-
-
-        # Search attachment
-
-        self.chrome_combo_ekList = ttk.Combobox(self.chrome_search_attachment, width=24, textvariable=self.search_combo)
-        self.chrome_combo_ekList['values'] = (self.config.return_read(self.info_path,self.language,"armor_accuracy"),
-                                                self.config.return_read(self.info_path,self.language,"armor_experience_rate"),
-                                                self.config.return_read(self.info_path,self.language,"armor_drop_rate"),
-                                                #self.config.return_read(self.info_path,self.language,"armor_pierce"),
-                                                self.config.return_read(self.info_path,self.language,"weapon_accuracy"),
-                                                self.config.return_read(self.info_path,self.language,"weapon_ra_accuracy"),
-                                                self.config.return_read(self.info_path,self.language,"weapon_ra_attack"),
-                                                self.config.return_read(self.info_path,self.language,"weapon_weight"),
-                                                #self.config.return_read(self.info_path,self.language,"weapon_pierce"),
-                                                self.config.return_read(self.info_path,self.language,"pet"))
-        self.chrome_combo_ekList.bind("<<ComboboxSelected>>", self.set_fixes)
-        self.ettac_list = Listbox(self.chrome_search_attachment,font = ("Helvatica bold", 12),selectmode='multiple')
-
-        self.search_add_p = Button(self.chrome_search_attachment,text = "P>",font = ("Helvatica bold", 10),command=self.ettac_add_p)
-        self.search_remove_p = Button(self.chrome_search_attachment, text = "P<",font = ("Helvatica bold", 10),command = self.ettac_remove_p)
-
-        self.search_add_s = Button(self.chrome_search_attachment,text = "S>",font = ("Helvatica bold", 10),command=self.ettac_add_s)
-        self.search_remove_s = Button(self.chrome_search_attachment, text = "S<",font = ("Helvatica bold", 10),command = self.ettac_remove_s)
-
-
-
-
-        self.search_ettac_list_name = Label(self.chrome_search_attachment, text = self.config.return_read(self.info_path,self.language,"prefixes_to_search"),font = ("Helvatica bold", 12),bg = "red")
-        self.search_ettac_list = Listbox(self.chrome_search_attachment,font = ("Helvatica bold", 12),selectmode='multiple')
-        self.search_ettac_list_name_s = Label(self.chrome_search_attachment, text = self.config.return_read(self.info_path,self.language,"suffix_to_search"),font = ("Helvatica bold", 12),bg = "red")
-        self.search_ettac_list_2 = Listbox(self.chrome_search_attachment,font = ("Helvatica bold", 12),selectmode='multiple')
-
-        self.coming_ettac = Label(self.chrome_search_attachment, bg="green", textvariable=self.ettac_counter_text,font = ("Helvatica bold", 12))
-        self.coming_ettac_list = Listbox(self.chrome_search_attachment, font=("Helvatica bold", 12))
-
-        self.number_of_ettac_P = Entry(self.chrome_search_attachment,font = ("Helvatica bold", 13),bg="green",width=5)
-        self.number_of_ettac_P.insert(0,"0")
-
-        self.number_of_ettac_S = Entry(self.chrome_search_attachment, font=("Helvatica bold", 13), bg="green",width=5)
-        self.number_of_ettac_S.insert(0, "0")
-        self.ettac_counter_text.set(self.config.return_read(self.info_path,self.language,"fixes") + " (" + str(self.ettac_counter) + ")")
-
-        self.search_start_stop = Button(self.chrome_search_attachment, text= self.config.return_read(self.info_path,self.language,"run"),font = ("Helvatica bold", 12),command= self.ettac_check)
-
-        self.info_button = Button(self.chrome_search_attachment, image=self.info_image,command = self.open_info)
-        self.istatistik_button = Button(self.chrome_search_attachment, image=self.istatistik_image,command = self.open_statistic)
-
-        self.ettac_P = Checkbutton(self.chrome_search_attachment, text="P", variable=self.checkVars_1,onvalue=1, offvalue=0)
-        self.ettac_S = Checkbutton(self.chrome_search_attachment, text="S", variable=self.checkVars_2,onvalue=1, offvalue=0)
-        
-
+        if self.verbose:
+           print("> InitGui {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         #Menu
         self.menubar = Menu(self.parent)
         self.filemenu = Menu(self.menubar, tearoff=0)
@@ -119,7 +46,8 @@ class tkinterGui(Frame):
         self.filemenu.add_command(label = "ID-Pass", command = self.run_passworDirectory)
         self.filemenu.add_command(label = "Search", command = self.search_ek)
         self.filemenu.add_command(label = "Delete Item", command = self.delete_items)
-        self.filemenu.add_separator()
+        self.filemenu.add_command(label = "Bosses", command = self.show_bosses)
+        
 
         self.help_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label =  self.config.return_read(self.info_path,self.language,"language"), menu = self.help_menu)
@@ -139,97 +67,16 @@ class tkinterGui(Frame):
                     self.resolition_menu.add_command(label = "→"+ section +"←", command = partial(self.change_resolition, section))
                 else:
                     self.resolition_menu.add_command(label = section, command = partial(self.change_resolition, section))
-               
-
 
         root.config(menu=self.menubar)
-
-
-
-        self.canvas.create_window(10, 10, anchor=NW, window=self.chrome_combo_ekList)
-        self.canvas.create_window(175, 10, anchor=NW, window=self.search_ettac_list_name)
-        self.canvas.create_window(325,10, anchor=NW, window=self.search_ettac_list_name_s)
-        self.canvas.create_window(490, 10, anchor=NW, window=self.coming_ettac)
-
-        self.canvas.create_window(10, 40, anchor=NW, window=self.ettac_list)
-        self.canvas.create_window(160, 40, anchor=NW, window=self.search_ettac_list)
-        self.canvas.create_window(310, 40, anchor=NW, window=self.search_ettac_list_2)
-        self.canvas.create_window(460, 40, anchor=NW, window=self.coming_ettac_list)
-
-        self.canvas.create_window(165, 205, anchor=NW, window=self.ettac_P)
-        self.canvas.create_window(205, 206, anchor=NW, window=self.number_of_ettac_P)
-        self.canvas.create_window(250, 205, anchor=NW, window=self.search_add_p)
-        self.canvas.create_window(275, 205,anchor=NW, window=self.search_remove_p)
-
-        self.canvas.create_window(315, 205, anchor=NW, window=self.ettac_S)
-        self.canvas.create_window(355, 206, anchor=NW, window=self.number_of_ettac_S)
-        self.canvas.create_window(400, 205, anchor=NW, window=self.search_add_s)
-        self.canvas.create_window(425, 205, anchor=NW, window=self.search_remove_s)
-
-        self.canvas.create_window(540, 205, anchor=NW, window=self.search_start_stop)
-        self.canvas.create_window(500, 205, anchor=NW, window=self.info_button)
-        self.canvas.create_window(462, 205, anchor=NW, window=self.istatistik_button)
-        
-                #Dissolition and delete item
-        self.delete_item_canvas = Canvas(self.deleteItemFrame, width=340, height=102)
-        img = ImageTk.PhotoImage(Image.open('file\\png\\error.png').resize((340, 102), Image.ANTIALIAS))  #
-        self.delete_item_canvas.background = img  #
-        bg_pic = self.delete_item_canvas.create_image(0, 0, anchor=NW, image=img)
-        self.delete_item_canvas.grid(row=0, column=0, rowspan=340, columnspan=102)
-
-        self.satir = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=5)
-        self.satir.insert(0,self.config.return_read(self.info_path,self.language,"row"))
-        self.sutun = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.sutun.insert(0,self.config.return_read(self.info_path,self.language,"column"))
-        self.numbef_of_fragmented_item = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.numbef_of_fragmented_item.insert(0,self.config.return_read(self.info_path,self.language,"number"))
-        self.fragmented_item_button = Button(self.deleteItemFrame, text = self.config.return_read(self.info_path,self.language,"dissolution_item"), command = self.dissolution_item_func)
-        
-        
-
-
-
-        
-        self.satir2 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=5)
-        self.satir2.insert(0,self.config.return_read(self.info_path,self.language,"row"))
-        self.sutun2 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.sutun2.insert(0,self.config.return_read(self.info_path,self.language,"column"))
-        self.numbef_of_fragmented_item2 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.numbef_of_fragmented_item2.insert(0,self.config.return_read(self.info_path,self.language,"number"))
-        self.fragmented_item_button2 = Button(self.deleteItemFrame, text = self.config.return_read(self.info_path,self.language,"delete_item"), command = self.delete_item_func)
-
-
-        self.satir3 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=5)
-        self.satir3.insert(0,self.config.return_read(self.info_path,self.language,"row"))
-        self.sutun3 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.sutun3.insert(0,self.config.return_read(self.info_path,self.language,"column"))
-        self.numbef_of_fragmented_item3 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
-        self.numbef_of_fragmented_item3.insert(0,self.config.return_read(self.info_path,self.language,"number"))
-        self.fragmented_item_button3 = Button(self.deleteItemFrame, text = self.config.return_read(self.info_path,self.language,"smash_token"), command = self.break_a_token)
-
-        y=0
-        self.delete_item_canvas.create_window(5, 5+y, anchor=NW, window=self.satir)
-        self.delete_item_canvas.create_window(47, 5+y, anchor=NW, window=self.sutun)
-        self.delete_item_canvas.create_window(103, 5+y, anchor=NW, window=self.numbef_of_fragmented_item)
-        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=self.fragmented_item_button)
-        y=25
-        self.delete_item_canvas.create_window(5, 5+y, anchor=NW, window=self.satir2)
-        self.delete_item_canvas.create_window(47, 5+y, anchor=NW, window=self.sutun2)
-        self.delete_item_canvas.create_window(103, 5+y, anchor=NW, window=self.numbef_of_fragmented_item2)
-        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=self.fragmented_item_button2)
-
-        y=50
-        self.delete_item_canvas.create_window(5, 5+y, anchor=NW, window=self.satir3)
-        self.delete_item_canvas.create_window(47, 5+y, anchor=NW, window=self.sutun3)
-        self.delete_item_canvas.create_window(103, 5+y, anchor=NW, window=self.numbef_of_fragmented_item3)
-        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=self.fragmented_item_button3)
-
   
-
-  
-        
+        if self.verbose:
+           print("< InitGui {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
 
     def variables(self):
+        self.verbose = False
+        if self.verbose:
+           print("> variables {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         self.path = "file\\"
         self.info_path = self.path + "config.ini"
         self.config = config_parser
@@ -237,13 +84,13 @@ class tkinterGui(Frame):
         self.deleteItemFrame = Frame(self.parent)
         self.chrome_idPass_Frame = Frame(self.parent)
         self.chrome_search_attachment = Frame(self.parent)
+        self.chrome_bosses = Frame(self.parent)
         self.checkVars_1 = IntVar()
         self.checkVars_2 = IntVar()
         self.search_combo = StringVar()
+        self.counter = 1
 
-        self.mainFrame = Frame(self.parent)
-        self.table_builder_frame = Frame(self.parent)
-        self.mainFrame.grid(row=0, column=0)
+
 
         self.click = [False, False]
         self.language = self.config.return_read(self.info_path,"info","language")
@@ -285,16 +132,101 @@ class tkinterGui(Frame):
         self.ettac_counter_text = StringVar()
         self.ettac_counter = 0
 
-        
+        if self.verbose:
+           print("< variables {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
 
     def donothing(self):
         pass
+    def show_bosses(self):
+        self.remove_all_frame()
+        self.chrome_bosses.grid(row=0,column=0)
+        self.parent.geometry("605x255")
+        self.boss_canvas = Canvas(self.chrome_bosses, width=605, height=500)
+        img = ImageTk.PhotoImage(Image.open('file\\png\\bg.png').resize((605, 500), Image.ANTIALIAS))  #
+        self.boss_canvas.background = img  #
+        bg_pic = self.boss_canvas.create_image(0, 0, anchor=NW, image=img)
+        self.boss_canvas.grid(row=0, column=0, rowspan=500, columnspan=605)
+        self.boss_names = self.database.return_boss_names()
+        self.boss_names_ekList = ttk.Combobox(self.boss_canvas, width=24, textvariable=self.donothing)
+
+        tuple = ()
+        for names in self.boss_names:
+            tuple += (names[0],)
+        self.boss_names_ekList['values'] = tuple
+        self.boss_names_ekList.current(0)
+        self.boss_names_ekList.bind("<<ComboboxSelected>>", self.choose_boss)
+
+        self.boss_names_text_info = Text (self.chrome_bosses, height = 5,
+                width = 25,
+                bg = "light yellow", font = ("Helvatica",12))
+        #self.tree = ttk.Treeview(self.chrome_bosses,height = 6)
+
+        columns = ("ek_adi","sayisi" )
+        self.tree = ttk.Treeview(self.chrome_bosses, columns=columns, show='headings',height = 10)
+        self.tree.heading('ek_adi', text=self.config.return_read(self.info_path,self.language,"boss_name"), anchor='center')
+        self.tree.heading('sayisi', text=self.config.return_read(self.info_path,self.language,"boss_Drop_rate"), anchor='center')
+        self.tree.column("ek_adi", anchor='center')
+        self.tree.column("sayisi", anchor='center')
+
+
+
+        self.boss_canvas.create_window(5, 5, anchor=NW, window=self.boss_names_ekList)
+        self.boss_canvas.create_window(5, 25, anchor=NW, window=self.boss_names_text_info)
+        self.boss_canvas.create_window(200, 25, anchor=NW, window=self.tree)
+
+        
+
+
+        self.choose_boss("_")
+    def choose_boss(self,_):
+        boss_name = self.boss_names_ekList.get()
+        for name_set in self.boss_names:
+            if boss_name in name_set:
+                id = name_set[1]
+
+        drops, boss_info = self.return_boss_items(id)
+        text_ ="""Name = {}\nLevel = {}\nHp = {}\nRange = {}\nrecoveryTime = {}""".format(boss_info[0].strip("\y").strip("\c").strip("\m").strip("\o"),boss_info[1],boss_info[2],boss_info[3],boss_info[4])
+        self.boss_names_text_info.delete('1.0', END)
+
+        self.boss_names_text_info.insert(END,text_)
+
+        if self.counter > 1:
+            for i in self.tree.get_children():
+                self.tree.delete(i)
+        self.tree.insert('', END, text=boss_name, iid=0, open=False)
+
+        self.counter =1
+        for drop in drops:
+            #text_ = drop.strip("\y").strip("\c").strip("\m") +" -- " + str(drops[drop]) + "%"
+            self.tree.insert('', END, values=(drop.strip("\y").strip("\c").strip("\m"),str(drops[drop])+"%"), iid = self.counter, open=False)
+            #self.tree.move(self.counter, 0, self.counter-1)
+            self.counter +=1
+
+
+
+    def return_boss_items(self,id):
+        headers = {'accept': '*/*',
+                    'Cr-Api-Key': 'Gork3m-Player-Z5X96djv',}
+        url = "https://api.chromerivals.net/pedia/monster/" +str(id)
+        response = requests.get(url, headers=headers)
+        res = json.loads(response.text)
+        name = res["result"]["name"]
+        level = res["result"]["level"]
+        hp = res["result"]["hp"]
+        range = res["result"]["range"]
+        recoveryTime = res["result"]["recoveryTime"]
+        drops = {}
+        for drop_items in res["result"]["drop"]:
+            drops[drop_items["referenceItem"]["name"]] = drop_items["dropProbability"]
+
+        return drops,[name,level,hp,range,recoveryTime]
     def check_update(self):
+        if self.verbose:
+           print("> check_update {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         if int(self.config.return_read(self.info_path,"info","version")) < 10:
             link = self.config.return_read(self.info_path,"info","update_link")+"version_v_0"+str(int( self.config.return_read(self.info_path,"info","version"))+1) + ".zip"
         else:
             link = self.config.return_read(self.info_path,"info","update_link")+"version_v_"+str(int( self.config.return_read(self.info_path,"info","version"))+1) + ".zip"
-        print(link)
         sorgu = requests.head(link, allow_redirects=True)
         if sorgu.status_code == 200:
 
@@ -305,14 +237,19 @@ class tkinterGui(Frame):
             self.config.write(self.info_path,"version",version)
             try: win32api.WinExec(os.getcwd() + '\\updater\\updater.exe') # Works seamlessly
             except: pass
-
+            if self.verbose:
+                print("< check_update {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
             self.parent.destroy()
                  
         else:
+            if self.verbose:
+                print("< check_update {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
             self.search_ek()
     def about(self):
         pass
     def change_resolition(self,resolution):
+        if self.verbose:
+           print("> change_resolution {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         self.config.write(self.info_path,"resolition",resolution)
         self.resolition = resolution
 
@@ -335,9 +272,12 @@ class tkinterGui(Frame):
         self.token_panel = [int(self.config.return_read(self.info_path,self.resolition,"token_panel").split(",")[0]),int(self.config.return_read(self.info_path,self.resolition,"token_panel").split(",")[1])]
         self.token_start = [int(self.config.return_read(self.info_path,self.resolition,"token_start").split(",")[0]),int(self.config.return_read(self.info_path,self.resolition,"token_start").split(",")[1])]
         self.token_accept = [int(self.config.return_read(self.info_path,self.resolition,"token_accept").split(",")[0]),int(self.config.return_read(self.info_path,self.resolition,"token_accept").split(",")[1])]
-
+        if self.verbose:
+           print("< chance_resoluiton {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         self.update_language()
     def update_language(self):
+        if self.verbose:
+           print("> update_language {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         self.menubar.delete(0, 'end')
         self.menubar = Menu(self.parent)
         self.filemenu = Menu(self.menubar, tearoff=0)
@@ -345,7 +285,8 @@ class tkinterGui(Frame):
         self.filemenu.add_command(label = "ID-Pass", command = self.run_passworDirectory)
         self.filemenu.add_command(label = "Search", command = self.search_ek)
         self.filemenu.add_command(label = "Delete Item", command = self.delete_items)
-        self.filemenu.add_separator()
+        self.filemenu.add_command(label = "Bosses", command = self.show_bosses)
+        
 
         self.help_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label =  self.config.return_read(self.info_path,self.language,"language"), menu = self.help_menu)
@@ -367,32 +308,15 @@ class tkinterGui(Frame):
 
 
         root.config(menu=self.menubar)
+
         self.parent.title("Toolbox")
+        """
         self.id.delete(0, END)
         self.id.insert(0, self.config.return_read(self.info_path,self.language,"username"))
         self.passwd.delete(0, END)
         self.passwd.insert(0, self.config.return_read(self.info_path,self.language,"passwd"))
         self.add.config(text = self.config.return_read(self.info_path,self.language,"add"))
-        self.chrome_combo_ekList.set('')
-        self.chrome_combo_ekList['values'] = (self.config.return_read(self.info_path,self.language,"armor_accuracy"),
-                                                self.config.return_read(self.info_path,self.language,"armor_experience_rate"),
-                                                self.config.return_read(self.info_path,self.language,"armor_drop_rate"),
-                                                #self.config.return_read(self.info_path,self.language,"armor_pierce"),
-                                                self.config.return_read(self.info_path,self.language,"weapon_accuracy"),
-                                                self.config.return_read(self.info_path,self.language,"weapon_ra_accuracy"),
-                                                self.config.return_read(self.info_path,self.language,"weapon_ra_attack"),
-                                                self.config.return_read(self.info_path,self.language,"weapon_weight"),
-                                                #self.config.return_read(self.info_path,self.language,"weapon_pierce"),
-                                                self.config.return_read(self.info_path,self.language,"pet"))
-        
-      
-        
 
-        self.search_ettac_list_name.config(text = self.config.return_read(self.info_path,self.language,"prefixes_to_search"))
-        self.search_ettac_list_name_s.config(text = self.config.return_read(self.info_path,self.language,"suffix_to_search"))
-        self.ettac_counter_text.set(self.config.return_read(self.info_path,self.language,"fixes") + " (" + str(self.ettac_counter) + ")")
-
-        self.search_start_stop.config(text= self.config.return_read(self.info_path,self.language,"run"))
         self.fragmented_item_button.config(text= self.config.return_read(self.info_path,self.language,"dissolution_item"))
         self.fragmented_item_button2.config(text= self.config.return_read(self.info_path,self.language,"delete_item"))
         self.fragmented_item_button3.config(text= self.config.return_read(self.info_path,self.language,"smash_token"))
@@ -418,7 +342,35 @@ class tkinterGui(Frame):
         self.satir3.insert(0,self.config.return_read(self.info_path,self.language,"row"))
         self.sutun3.insert(0,self.config.return_read(self.info_path,self.language,"column"))
         self.numbef_of_fragmented_item3.insert(0,self.config.return_read(self.info_path,self.language,"number"))
+
+        """
+        self.chrome_combo_ekList.set('')
+        self.chrome_combo_ekList['values'] = (self.config.return_read(self.info_path,self.language,"armor_accuracy"),
+                                                self.config.return_read(self.info_path,self.language,"armor_experience_rate"),
+                                                self.config.return_read(self.info_path,self.language,"armor_drop_rate"),
+                                                #self.config.return_read(self.info_path,self.language,"armor_pierce"),
+                                                self.config.return_read(self.info_path,self.language,"weapon_accuracy"),
+                                                self.config.return_read(self.info_path,self.language,"weapon_ra_accuracy"),
+                                                self.config.return_read(self.info_path,self.language,"weapon_ra_attack"),
+                                                self.config.return_read(self.info_path,self.language,"weapon_weight"),
+                                                #self.config.return_read(self.info_path,self.language,"weapon_pierce"),
+                                                self.config.return_read(self.info_path,self.language,"pet"))
+        
+      
+        
+
+        self.search_ettac_list_name.config(text = self.config.return_read(self.info_path,self.language,"prefixes_to_search"))
+        self.search_ettac_list_name_s.config(text = self.config.return_read(self.info_path,self.language,"suffix_to_search"))
+        self.ettac_counter_text.set(self.config.return_read(self.info_path,self.language,"fixes") + " (" + str(self.ettac_counter) + ")")
+
+        self.search_start_stop.config(text= self.config.return_read(self.info_path,self.language,"run"))
+
+        
+        if self.verbose:
+           print("< update_language {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
     def loading_screen(self):
+        if self.verbose:
+           print("> loading_Screen {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         self.loading_canvas = Canvas(self.loading_frame, width=310, height=120)
         img = ImageTk.PhotoImage(Image.open('file\\png\\new_error.png').resize((310, 120), Image.ANTIALIAS))  #
         self.loading_canvas.background = img  #
@@ -431,7 +383,9 @@ class tkinterGui(Frame):
         warning1 = Label(self.loading_frame, text=  self.config.return_read(self.info_path,self.language,"notice_1"), font =("Helvatica",12))
         warning2 = Label(self.loading_frame, text=  self.config.return_read(self.info_path,self.language,"notice_2"), font =("Helvatica",12))
 
-        if self.return_mongodb():
+        if self.return_licences():
+            if self.verbose:
+                print("< loading_Screen {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
             self.loading_variables_destroy()
         else:
             self.parent.geometry("310x120")
@@ -439,7 +393,12 @@ class tkinterGui(Frame):
             self.loading_canvas.create_window(10, 35, anchor=NW, window=warning2)
             self.loading_canvas.create_window(260, 60, anchor=NW, window=copy)
             self.loading_canvas.create_window(10, 60, anchor=NW, window=uuid)
+            if self.verbose:
+                print("< loading_screen {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
     def loading_variables_set(self):
+        self.variables()
+        if self.verbose:
+           print("> loading_variables_set {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         self.parent.geometry("700x300")
         self.loading_frame = Frame(self.parent)
         self.loading_frame.grid(row=0,column=0)
@@ -448,17 +407,24 @@ class tkinterGui(Frame):
         current_machine_id = subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip()
         self.uuid.set(current_machine_id)
         self.percent_textvar.set("0.00%")
-        self.variables()
-        self.loading_screen()
-    def loading_variables_destroy(self):
         
+        self.loading_screen()
+        if self.verbose:
+           print("< loading_variables_set {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
+    def loading_variables_destroy(self):
+        if self.verbose:
+           print("> loading_variables_destroy {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         self.parent.geometry("147x197")
         self.loading_frame.grid_remove()
         self.InitGui()
         self.check_update()
+        if self.verbose:
+           print("< loading_variables_destroy {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
     def open_help(self):
         pass
     def open_info(self):
+        if self.verbose:
+           print("> open_info {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         popup= Toplevel(root)
         popup.geometry("720x735")
         popup.title("Sample Inventory Lineup")
@@ -467,7 +433,11 @@ class tkinterGui(Frame):
         canvas.background = img  #
         bg_pic = canvas.create_image(0, 0, anchor=NW, image=img)
         canvas.grid(row=0, column=0, rowspan=720, columnspan=735)
+        if self.verbose:
+           print("< open_info {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
     def open_statistic(self):
+        if self.verbose:
+           print("> open_statistic {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         popup= Toplevel(root)
         popup.geometry("415x235")
         popup.title("Incoming Attachment Statistics")
@@ -483,20 +453,27 @@ class tkinterGui(Frame):
         tree.column("ek_adi", anchor='center')
         tree.column("sayisi", anchor='center')
         data = self.database.return_statistics()
+        print(data)
         for contact in data:
             tree.insert('', END, values=contact)
 
 
 
         canvas.create_window(5, 5, anchor=NW, window=tree)
+        if self.verbose:
+           print("< open_statistic {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
     def copy_uuid(self):
 
        pyperclip.copy(self.uuid.get())
     def change_language(self,language):
+        if self.verbose:
+           print("> chance_language {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         self.language = language
      
         self.config.write(self.info_path,"language",language)
         self.update_language()
+        if self.verbose:
+           print("< change_language {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
     def break_a_token(self):
         if self.satir3.get().isnumeric() and self.sutun3.get().isnumeric() and self.numbef_of_fragmented_item3.get().isnumeric():
             satir = int(self.satir3.get())
@@ -560,25 +537,80 @@ class tkinterGui(Frame):
                     self.movement.click_button()
                     if keyboard.is_pressed('space'):
                         exit = False
-    def return_mongodb(self):
-
-        self.client = pymongo.MongoClient(
-            "mongodb+srv://bosstimer:timerboss@cluster0.zxtp6.mongodb.net/Cluster0?retryWrites=true&w=majority")
-        conn = self.client["UUID"]
-        db = conn['uuids']
+    def return_licences(self):
+        if self.verbose:
+           print("> return_licences {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         
-        uuid = str(db.find_one({str(subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip()):"True"}))
-        if uuid == "None":
-            return False
-        else:
+        link = self.config.return_read(self.info_path,"info","licences")+ str(subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip()) + ".txt"
+        sorgu = requests.head(link, allow_redirects=True)
+        if sorgu.status_code == 200:
+            if self.verbose:
+                print("< return_licences {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
             return True
-        return True      
+                 
+        else:
+            if self.verbose:
+                print("< return_mongosb {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
+            return False
+    
     def delete_items(self):
         self.remove_all_frame()
         self.parent.title( self.config.return_read(self.info_path,self.language,"notice_9"))
-        self.parent.geometry()
         self.parent.geometry("340x102")
         self.deleteItemFrame.grid(row=0,column=0)
+        self.delete_item_canvas = Canvas(self.deleteItemFrame, width=340, height=102)
+        img = ImageTk.PhotoImage(Image.open('file\\png\\error.png').resize((340, 102), Image.ANTIALIAS))  #
+        self.delete_item_canvas.background = img  #
+        bg_pic = self.delete_item_canvas.create_image(0, 0, anchor=NW, image=img)
+        self.delete_item_canvas.grid(row=0, column=0, rowspan=340, columnspan=102)
+        
+
+        self.satir = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=5)
+        self.satir.insert(0,self.config.return_read(self.info_path,self.language,"row"))
+        self.sutun = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
+        self.sutun.insert(0,self.config.return_read(self.info_path,self.language,"column"))
+        self.numbef_of_fragmented_item = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
+        self.numbef_of_fragmented_item.insert(0,self.config.return_read(self.info_path,self.language,"number"))
+        self.fragmented_item_button = Button(self.deleteItemFrame, text = self.config.return_read(self.info_path,self.language,"dissolution_item"), command = self.dissolution_item_func)
+        
+        
+
+
+
+        
+        self.satir2 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=5)
+        self.satir2.insert(0,self.config.return_read(self.info_path,self.language,"row"))
+        self.sutun2 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
+        self.sutun2.insert(0,self.config.return_read(self.info_path,self.language,"column"))
+        self.numbef_of_fragmented_item2 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
+        self.numbef_of_fragmented_item2.insert(0,self.config.return_read(self.info_path,self.language,"number"))
+        self.fragmented_item_button2 = Button(self.deleteItemFrame, text = self.config.return_read(self.info_path,self.language,"delete_item"), command = self.delete_item_func)
+
+
+        self.satir3 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=5)
+        self.satir3.insert(0,self.config.return_read(self.info_path,self.language,"row"))
+        self.sutun3 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
+        self.sutun3.insert(0,self.config.return_read(self.info_path,self.language,"column"))
+        self.numbef_of_fragmented_item3 = Entry(self.deleteItemFrame, font= ("Helvatica",12),width=7)
+        self.numbef_of_fragmented_item3.insert(0,self.config.return_read(self.info_path,self.language,"number"))
+        self.fragmented_item_button3 = Button(self.deleteItemFrame, text = self.config.return_read(self.info_path,self.language,"smash_token"), command = self.break_a_token)
+
+        y=0
+        self.delete_item_canvas.create_window(5, 5+y, anchor=NW, window=self.satir)
+        self.delete_item_canvas.create_window(47, 5+y, anchor=NW, window=self.sutun)
+        self.delete_item_canvas.create_window(103, 5+y, anchor=NW, window=self.numbef_of_fragmented_item)
+        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=self.fragmented_item_button)
+        y=25
+        self.delete_item_canvas.create_window(5, 5+y, anchor=NW, window=self.satir2)
+        self.delete_item_canvas.create_window(47, 5+y, anchor=NW, window=self.sutun2)
+        self.delete_item_canvas.create_window(103, 5+y, anchor=NW, window=self.numbef_of_fragmented_item2)
+        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=self.fragmented_item_button2)
+
+        y=50
+        self.delete_item_canvas.create_window(5, 5+y, anchor=NW, window=self.satir3)
+        self.delete_item_canvas.create_window(47, 5+y, anchor=NW, window=self.sutun3)
+        self.delete_item_canvas.create_window(103, 5+y, anchor=NW, window=self.numbef_of_fragmented_item3)
+        self.delete_item_canvas.create_window(160, 5+y, anchor=NW, window=self.fragmented_item_button3)
     def set_fixes(self,_):
         ek_name = self.chrome_combo_ekList.get()
         attachments = self.database.return_attachments_list(ek_name)
@@ -588,9 +620,88 @@ class tkinterGui(Frame):
             self.ettac_list.insert(END, i)
     def search_ek(self):
         self.remove_all_frame()
+        
         self.chrome_search_attachment.grid(row=0,column=0)
+
         self.parent.title( self.config.return_read(self.info_path,self.language,"notice_8"))
         self.parent.geometry("630x250")
+        # Search attachment
+        self.canvas = Canvas(self.chrome_search_attachment, width=630, height=250)
+        img = ImageTk.PhotoImage(Image.open('file\\png\\chrome_wallpaper.png').resize((630, 250), Image.ANTIALIAS))  #
+        self.canvas.background = img  #
+        bg_pic = self.canvas.create_image(0, 0, anchor=NW, image=img)
+        self.canvas.grid(row=0, column=0, rowspan=630, columnspan=250)
+        
+
+        self.chrome_combo_ekList = ttk.Combobox(self.chrome_search_attachment, width=24, textvariable=self.search_combo)
+        self.chrome_combo_ekList['values'] = (self.config.return_read(self.info_path,self.language,"armor_accuracy"),
+                                                self.config.return_read(self.info_path,self.language,"armor_experience_rate"),
+                                                self.config.return_read(self.info_path,self.language,"armor_drop_rate"),
+                                                #self.config.return_read(self.info_path,self.language,"armor_pierce"),
+                                                self.config.return_read(self.info_path,self.language,"weapon_accuracy"),
+                                                self.config.return_read(self.info_path,self.language,"weapon_ra_accuracy"),
+                                                self.config.return_read(self.info_path,self.language,"weapon_ra_attack"),
+                                                self.config.return_read(self.info_path,self.language,"weapon_weight"),
+                                                #self.config.return_read(self.info_path,self.language,"weapon_pierce"),
+                                                self.config.return_read(self.info_path,self.language,"pet"))
+        self.chrome_combo_ekList.bind("<<ComboboxSelected>>", self.set_fixes)
+        self.ettac_list = Listbox(self.chrome_search_attachment,font = ("Helvatica bold", 12),selectmode='multiple')
+
+        self.search_add_p = Button(self.chrome_search_attachment,text = "P>",font = ("Helvatica bold", 10),command=self.ettac_add_p)
+        self.search_remove_p = Button(self.chrome_search_attachment, text = "P<",font = ("Helvatica bold", 10),command = self.ettac_remove_p)
+
+        self.search_add_s = Button(self.chrome_search_attachment,text = "S>",font = ("Helvatica bold", 10),command=self.ettac_add_s)
+        self.search_remove_s = Button(self.chrome_search_attachment, text = "S<",font = ("Helvatica bold", 10),command = self.ettac_remove_s)
+
+
+
+
+        self.search_ettac_list_name = Label(self.chrome_search_attachment, text = self.config.return_read(self.info_path,self.language,"prefixes_to_search"),font = ("Helvatica bold", 12),bg = "red")
+        self.search_ettac_list = Listbox(self.chrome_search_attachment,font = ("Helvatica bold", 12),selectmode='multiple')
+        self.search_ettac_list_name_s = Label(self.chrome_search_attachment, text = self.config.return_read(self.info_path,self.language,"suffix_to_search"),font = ("Helvatica bold", 12),bg = "red")
+        self.search_ettac_list_2 = Listbox(self.chrome_search_attachment,font = ("Helvatica bold", 12),selectmode='multiple')
+
+        self.coming_ettac = Label(self.chrome_search_attachment, bg="green", textvariable=self.ettac_counter_text,font = ("Helvatica bold", 12))
+        self.coming_ettac_list = Listbox(self.chrome_search_attachment, font=("Helvatica bold", 12))
+
+        self.number_of_ettac_P = Entry(self.chrome_search_attachment,font = ("Helvatica bold", 13),bg="green",width=5)
+        self.number_of_ettac_P.insert(0,"0")
+
+        self.number_of_ettac_S = Entry(self.chrome_search_attachment, font=("Helvatica bold", 13), bg="green",width=5)
+        self.number_of_ettac_S.insert(0, "0")
+        self.ettac_counter_text.set(self.config.return_read(self.info_path,self.language,"fixes") + " (" + str(self.ettac_counter) + ")")
+
+        self.search_start_stop = Button(self.chrome_search_attachment, text= self.config.return_read(self.info_path,self.language,"run"),font = ("Helvatica bold", 12),command= self.ettac_check)
+
+        self.info_button = Button(self.chrome_search_attachment, image=self.info_image,command = self.open_info)
+        self.istatistik_button = Button(self.chrome_search_attachment, image=self.istatistik_image,command = self.open_statistic)
+
+        self.ettac_P = Checkbutton(self.chrome_search_attachment, text="P", variable=self.checkVars_1,onvalue=1, offvalue=0)
+        self.ettac_S = Checkbutton(self.chrome_search_attachment, text="S", variable=self.checkVars_2,onvalue=1, offvalue=0)
+
+        self.canvas.create_window(10, 10, anchor=NW, window=self.chrome_combo_ekList)
+        self.canvas.create_window(175, 10, anchor=NW, window=self.search_ettac_list_name)
+        self.canvas.create_window(325,10, anchor=NW, window=self.search_ettac_list_name_s)
+        self.canvas.create_window(490, 10, anchor=NW, window=self.coming_ettac)
+
+        self.canvas.create_window(10, 40, anchor=NW, window=self.ettac_list)
+        self.canvas.create_window(160, 40, anchor=NW, window=self.search_ettac_list)
+        self.canvas.create_window(310, 40, anchor=NW, window=self.search_ettac_list_2)
+        self.canvas.create_window(460, 40, anchor=NW, window=self.coming_ettac_list)
+
+        self.canvas.create_window(165, 205, anchor=NW, window=self.ettac_P)
+        self.canvas.create_window(205, 206, anchor=NW, window=self.number_of_ettac_P)
+        self.canvas.create_window(250, 205, anchor=NW, window=self.search_add_p)
+        self.canvas.create_window(275, 205,anchor=NW, window=self.search_remove_p)
+
+        self.canvas.create_window(315, 205, anchor=NW, window=self.ettac_S)
+        self.canvas.create_window(355, 206, anchor=NW, window=self.number_of_ettac_S)
+        self.canvas.create_window(400, 205, anchor=NW, window=self.search_add_s)
+        self.canvas.create_window(425, 205, anchor=NW, window=self.search_remove_s)
+
+        self.canvas.create_window(540, 205, anchor=NW, window=self.search_start_stop)
+        self.canvas.create_window(500, 205, anchor=NW, window=self.info_button)
+        self.canvas.create_window(462, 205, anchor=NW, window=self.istatistik_button)
     def ettac_check(self):
         if int(self.search_ettac_list.size()) == 0 and int(self.search_ettac_list_2.size()) == 0:
             showinfo( self.config.return_read(self.info_path,self.language,"notice_4"),  self.config.return_read(self.info_path,self.language,"notice_3"))
@@ -624,7 +735,7 @@ class tkinterGui(Frame):
         ettec_name =  self.search_ettac_list_2.get(0,END)
         for num in selected_ettec_list:
             if not self.ettac_list.get(num) in ettec_name:
-                self.search_ettac_list_2.insert(END, self.ettac_list.get(num))
+                self.search_ettac_list_2.insert(END, self.ettac_list.get(num))    
     def ettac_remove_s(self):
         selected_ettec_search = self.search_ettac_list_2.curselection()
         for i in selected_ettec_search:
@@ -706,7 +817,9 @@ class tkinterGui(Frame):
                     self.ara.crop_image()
                     name = self.ara.read_text("P")
                     if "'" in name:
+                        print("111")
                         name = name.strip("'")
+                    print("-{}-".format(name))
                     self.database.update_statistics(name)
                     self.coming_ettac_list.insert("end", "(P) "+name)
                     if "'" in name:
@@ -802,11 +915,30 @@ class tkinterGui(Frame):
         self.idPasswd.grid_remove()
         self.chrome_idPass_Frame.grid_remove()
         self.chrome_search_attachment.grid_remove()
+        self.chrome_bosses.grid_remove()
         self.deleteItemFrame.grid_remove()
     def run_passworDirectory(self):
         self.parent.title( self.config.return_read(self.info_path,self.language,"notice_7"))
         self.parent.geometry("645x300")
         self.remove_all_frame()
+        
+        self.treeBox = FancyListbox(self.idPasswd, font=("Helvatica bold", 12), justify=CENTER)
+        self.treeBox_id = FancyListbox(self.idPasswd, font=("Helvatica bold", 12), justify=CENTER)
+        self.treeBox_passwd = FancyListbox(self.idPasswd, font=("Helvatica bold", 12), justify=CENTER)
+        self.id = Entry(self.idPasswd, font="Helvatica 12 bold")
+        self.id.insert(0, self.config.return_read(self.info_path,self.language,"username"))
+        self.id.bind("<Button-1>", self.clear_directory_id)
+        self.passwd = Entry(self.idPasswd, font="Helvatica 12 bold")
+        self.passwd.insert(0, self.config.return_read(self.info_path,self.language,"passwd"))
+        self.passwd.bind("<Button-1>", self.clear_directory_passwd)
+
+        self.add = Button(self.idPasswd, text=self.config.return_read(self.info_path,self.language,"add"), command=self.add_data)
+        self.treeBox.grid(row=0, column=0, rowspan=4, columnspan=1, ipady=40)
+        self.treeBox_id.grid(row=0, column=1, rowspan=4, columnspan=2, ipadx=50, ipady=40)
+        self.treeBox_passwd.grid(row=0, column=3, rowspan=4, columnspan=3, ipadx=50, ipady=40)
+        self.id.grid(row=4, column=0, columnspan=2, ipadx=50, padx=1)
+        self.passwd.grid(row=4, column=2, columnspan=2, ipadx=50)
+        self.add.grid(row=4, column=4, ipadx=20, pady=2)
         self.idPasswd.grid(row=1, column=0)
         self.click = [False, False]
         self.database.create()
@@ -854,13 +986,11 @@ class config_parser:
     def return_read(address,id1,id2):
         config = configparser.ConfigParser()
         config.read(address)
-        print(id1,id2)
         ans = config[id1][id2]
         return ans
     def write(address,name,new_name):
         config = configparser.ConfigParser()
         config.read(address)
-        print(name,new_name)
         config["info"][name] =str( new_name)
         with open(address, 'w') as configfile:
             config.write(configfile)
@@ -1021,7 +1151,13 @@ class database:
             id.append(i[0])
             passwd.append(i[1])
         return id, passwd
-
+    def return_boss_names(self):
+        baglan = sqlite3.connect(self.path + "14901.db")
+        veri = baglan.cursor()
+        values = veri.execute("select * from boss").fetchall()
+        baglan.commit()
+        baglan.close()
+        return values
 class FancyListbox(tkinter.Listbox):
 
     def __init__(self, parent, *args, **kwargs):
@@ -1127,3 +1263,4 @@ if __name__ == "__main__":
     root.call('tk', 'scaling', 1.0)
     run = tkinterGui(root)
     root.mainloop()
+    

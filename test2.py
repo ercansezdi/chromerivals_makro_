@@ -1,7 +1,13 @@
-import sqlite3
+from ctypes import windll, Structure, c_long, byref
+from time import sleep
+class POINT(Structure):
+    _fields_ = [("x", c_long), ("y", c_long)]
+def queryMousePosition():
+        pt = POINT()
+        windll.user32.GetCursorPos(byref(pt))
+        return { "x": pt.x, "y": pt.y}
 
-
-baglan = sqlite3.connect("file\\attachments.db")
-veri = baglan.cursor()
-rows = veri.execute("SELECT * FROM attachments WHERE attachments_name=?", ("Ose",)).fetchone()
-print(rows[1])
+if __name__ == "__main__":
+    while True:
+        print(queryMousePosition())
+        sleep(0.1)
