@@ -310,40 +310,7 @@ class tkinterGui(Frame):
         root.config(menu=self.menubar)
 
         self.parent.title("Toolbox")
-        """
-        self.id.delete(0, END)
-        self.id.insert(0, self.config.return_read(self.info_path,self.language,"username"))
-        self.passwd.delete(0, END)
-        self.passwd.insert(0, self.config.return_read(self.info_path,self.language,"passwd"))
-        self.add.config(text = self.config.return_read(self.info_path,self.language,"add"))
 
-        self.fragmented_item_button.config(text= self.config.return_read(self.info_path,self.language,"dissolution_item"))
-        self.fragmented_item_button2.config(text= self.config.return_read(self.info_path,self.language,"delete_item"))
-        self.fragmented_item_button3.config(text= self.config.return_read(self.info_path,self.language,"smash_token"))
-
-
-        self.satir.delete(0,END)
-        self.sutun.delete(0,END)
-        self.numbef_of_fragmented_item.delete(0,END)
-        self.satir2.delete(0,END)
-        self.sutun2.delete(0,END)
-        self.numbef_of_fragmented_item2.delete(0,END)
-        self.satir3.delete(0,END)
-        self.sutun3.delete(0,END)
-        self.numbef_of_fragmented_item3.delete(0,END)
-
-
-        self.satir.insert(0,self.config.return_read(self.info_path,self.language,"row"))
-        self.sutun.insert(0,self.config.return_read(self.info_path,self.language,"column"))
-        self.numbef_of_fragmented_item.insert(0,self.config.return_read(self.info_path,self.language,"number"))
-        self.satir2.insert(0,self.config.return_read(self.info_path,self.language,"row"))
-        self.sutun2.insert(0,self.config.return_read(self.info_path,self.language,"column"))
-        self.numbef_of_fragmented_item2.insert(0,self.config.return_read(self.info_path,self.language,"number"))
-        self.satir3.insert(0,self.config.return_read(self.info_path,self.language,"row"))
-        self.sutun3.insert(0,self.config.return_read(self.info_path,self.language,"column"))
-        self.numbef_of_fragmented_item3.insert(0,self.config.return_read(self.info_path,self.language,"number"))
-
-        """
         self.chrome_combo_ekList.set('')
         self.chrome_combo_ekList['values'] = (self.config.return_read(self.info_path,self.language,"armor_accuracy"),
                                                 self.config.return_read(self.info_path,self.language,"armor_experience_rate"),
@@ -453,7 +420,6 @@ class tkinterGui(Frame):
         tree.column("ek_adi", anchor='center')
         tree.column("sayisi", anchor='center')
         data = self.database.return_statistics()
-        print(data)
         for contact in data:
             tree.insert('', END, values=contact)
 
@@ -817,9 +783,7 @@ class tkinterGui(Frame):
                     self.ara.crop_image()
                     name = self.ara.read_text("P")
                     if "'" in name:
-                        print("111")
                         name = name.strip("'")
-                    print("-{}-".format(name))
                     self.database.update_statistics(name)
                     self.coming_ettac_list.insert("end", "(P) "+name)
                     if "'" in name:
