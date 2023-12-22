@@ -1,30 +1,35 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter.messagebox import showinfo
+from random import randint
 
-# create root window
-root = tk.Tk()
-root.title('Treeview Demo - Hierarchical Data')
-root.geometry('400x200')
+users = ["asiye","nihal","emişe","ilknur","leyla","hilal","hatice","sude"]
 
-# configure the grid layout
-root.rowconfigure(0, weight=1)
-root.columnconfigure(0, weight=1)
+def get_winner():
+    users = ["asiye","nihal","emişe","ilknur","leyla","hilal","hatice","sude"]
+    user_count = len(users)
+    winner = users[randint(0, user_count-1)]
+    return winner
 
+hediye_sabihi_olucak = []
+hediye_satin_alicak = []
 
-tree = ttk.Treeview(root)
+if __name__ == "__main__":
+    user_count = len(users)
+    count = 0 
+    while count < user_count:
+        hediye_sahibi = get_winner()
+        hediye_verecek = get_winner()
 
-tree.insert('', tk.END, text='Administration', iid=0, open=False)
+        while hediye_sahibi == hediye_verecek:
+            hediye_sahibi = get_winner()
+        while hediye_verecek in hediye_satin_alicak:
+            hediye_verecek = get_winner()
+        while hediye_sahibi in hediye_sabihi_olucak:
+            hediye_sahibi = get_winner()
 
-# adding children of first node
-tree.insert('', tk.END, text='John Doe', iid=5, open=False)
-tree.insert('', tk.END, text='Jane Doe', iid=6, open=False)
-tree.move(5, 0, 0)
-tree.move(6, 0, 1)
+        hediye_sabihi_olucak.append(hediye_sahibi)
+        hediye_satin_alicak.append(hediye_verecek)
+        count += 1
+    
+    for i in range(user_count):
+        print(f"{hediye_sabihi_olucak[i]} isimli kullanıcı {hediye_satin_alicak[i]} isimli kullanıcıya hediye alacak.")
 
-
-
-tree.grid(row=0, column=0, sticky='nsew')
-
-# run the app
-root.mainloop()
+    

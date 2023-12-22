@@ -1,0 +1,24 @@
+<RCC>
+  <qresource prefix="new">
+    <file>icons8-electrified-cursor-50.png</file>
+    <file>icons8-advanced-search-50.png</file>
+    <file>icons8-security-pass-50.png</file>
+    <file>monster.png</file>
+    <file>pie-chart.png</file>
+    <file>search.png</file>
+    <file>search_all.png</file>
+    <file>information-button.png</file>
+    <file>installation.png</file>
+    <file>team.png</file>
+    <file>icons8-add-link-50.png</file>
+    <file>add_user.png</file>
+    <file>delete_user.png</file>
+    <file>re_user.png</file>
+    <file>icons8-change-user-50.png</file>
+    <file>ev_charge_station.png</file>
+    <file>users.png</file>
+    <file>close.png</file>
+    <file>minimize.png</file>
+    <file>chromerivals_logo.png</file>
+  </qresource>
+</RCC>

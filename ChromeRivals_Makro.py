@@ -12,20 +12,17 @@ from tkinter import ttk
 import sqlite3
 import configparser
 from tkinter import messagebox
-import random
 import subprocess
 import pyperclip
 from PIL import Image, ImageTk, ImageFont, ImageDraw
 import keyboard
-import ctypes
 import pyautogui
 import cv2
 import pytesseract
 from functools import partial
-import requests
-import json
 import win32api
 import win32con 
+import ctypes
 
 
 class tkinterGui(Frame):
@@ -77,7 +74,9 @@ class tkinterGui(Frame):
         self.verbose = False
         if self.verbose:
            print("> variables {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
-        self.path = "file\\"
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        self.path = my_path+ "\\file\\"
+        print(self.path + "config.ini") 
         self.info_path = self.path + "config.ini"
         self.config = config_parser
         self.idPasswd = Frame(self.parent)
@@ -95,8 +94,8 @@ class tkinterGui(Frame):
         self.click = [False, False]
         self.language = self.config.return_read(self.info_path,"info","language")
         self.resolition = self.config.return_read(self.info_path,"info","resolition")
-        self.info_image = ImageTk.PhotoImage(Image.open(self.path + 'png\\info.png').resize((25, 20), Image.ANTIALIAS))
-        self.istatistik_image = ImageTk.PhotoImage(Image.open(self.path + 'png\\istatistik.png').resize((25, 20), Image.ANTIALIAS))
+        self.info_image = ImageTk.PhotoImage(Image.open(self.path + 'png\\info.png').resize((25, 20), Image.Resampling.LANCZOS))
+        self.istatistik_image = ImageTk.PhotoImage(Image.open(self.path + 'png\\istatistik.png').resize((25, 20), Image.Resampling.LANCZOS))
 
         self.database = database()
         self.database.create()
@@ -142,7 +141,8 @@ class tkinterGui(Frame):
         self.chrome_bosses.grid(row=0,column=0)
         self.parent.geometry("605x255")
         self.boss_canvas = Canvas(self.chrome_bosses, width=605, height=500)
-        img = ImageTk.PhotoImage(Image.open('file\\png\\bg.png').resize((605, 500), Image.ANTIALIAS))  #
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        img = ImageTk.PhotoImage(Image.open(my_path + '\\file\\png\\bg.png').resize((605, 500), Image.Resampling.LANCZOS))  #
         self.boss_canvas.background = img  #
         bg_pic = self.boss_canvas.create_image(0, 0, anchor=NW, image=img)
         self.boss_canvas.grid(row=0, column=0, rowspan=500, columnspan=605)
@@ -205,46 +205,53 @@ class tkinterGui(Frame):
 
 
     def return_boss_items(self,id):
-        headers = {'accept': '*/*',
-                    'Cr-Api-Key': 'Gork3m-Player-Z5X96djv',}
-        url = "https://api.chromerivals.net/pedia/monster/" +str(id)
-        response = requests.get(url, headers=headers)
-        res = json.loads(response.text)
-        name = res["result"]["name"]
-        level = res["result"]["level"]
-        hp = res["result"]["hp"]
-        range = res["result"]["range"]
-        recoveryTime = res["result"]["recoveryTime"]
+        # headers = {'accept': '*/*',
+        #             'Cr-Api-Key': 'Gork3m-Player-Z5X96djv',}
+        # url = "https://api.chromerivals.net/pedia/monster/" +str(id)
+        # response = requests.get(url, headers=headers)
+        # res = json.loads(response.text)
+        # name = res["result"]["name"]
+        # level = res["result"]["level"]
+        # hp = res["result"]["hp"]
+        # range = res["result"]["range"]
+        # recoveryTime = res["result"]["recoveryTime"]
+        # drops = {}
+        # for drop_items in res["result"]["drop"]:
+        #     drops[drop_items["referenceItem"]["name"]] = drop_items["dropProbability"]
+
         drops = {}
-        for drop_items in res["result"]["drop"]:
-            drops[drop_items["referenceItem"]["name"]] = drop_items["dropProbability"]
+        name = "name"
+        level = "level"
+        hp = "hp"
+        range = "range"
+        recoveryTime = "recoveryTime"
 
         return drops,[name,level,hp,range,recoveryTime]
-    def check_update(self):
-        if self.verbose:
-           print("> check_update {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
-        if int(self.config.return_read(self.info_path,"info","version")) < 10:
-            link = self.config.return_read(self.info_path,"info","update_link")+"version_v_0"+str(int( self.config.return_read(self.info_path,"info","version"))+1) + ".zip"
-        else:
-            link = self.config.return_read(self.info_path,"info","update_link")+"version_v_"+str(int( self.config.return_read(self.info_path,"info","version"))+1) + ".zip"
-        sorgu = requests.head(link, allow_redirects=True)
-        if sorgu.status_code == 200:
+    # def check_update(self):
+    #     if self.verbose:
+    #        print("> check_update {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
+    #     if int(self.config.return_read(self.info_path,"info","version")) < 10:
+    #         link = self.config.return_read(self.info_path,"info","update_link")+"version_v_0"+str(int( self.config.return_read(self.info_path,"info","version"))+1) + ".zip"
+    #     else:
+    #         link = self.config.return_read(self.info_path,"info","update_link")+"version_v_"+str(int( self.config.return_read(self.info_path,"info","version"))+1) + ".zip"
+    #     sorgu = requests.head(link, allow_redirects=True)
+    #     if sorgu.status_code == 200:
 
-            if int(self.config.return_read(self.info_path,"info","version")) < 10:
-                version = "0"+str(int( self.config.return_read(self.info_path,"info","version"))+1)
-            else:
-                version = str(int( self.config.return_read(self.info_path,"info","version"))+1)
-            self.config.write(self.info_path,"version",version)
-            try: win32api.WinExec(os.getcwd() + '\\updater\\updater.exe') # Works seamlessly
-            except: pass
-            if self.verbose:
-                print("< check_update {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
-            self.parent.destroy()
+    #         if int(self.config.return_read(self.info_path,"info","version")) < 10:
+    #             version = "0"+str(int( self.config.return_read(self.info_path,"info","version"))+1)
+    #         else:
+    #             version = str(int( self.config.return_read(self.info_path,"info","version"))+1)
+    #         self.config.write(self.info_path,"version",version)
+    #         try: win32api.WinExec(os.getcwd() + '\\updater\\updater.exe') # Works seamlessly
+    #         except: pass
+    #         if self.verbose:
+    #             print("< check_update {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
+    #         self.parent.destroy()
                  
-        else:
-            if self.verbose:
-                print("< check_update {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
-            self.search_ek()
+    #     else:
+    #         if self.verbose:
+    #             print("< check_update {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
+    #         self.search_ek()
     def about(self):
         pass
     def change_resolition(self,resolution):
@@ -339,7 +346,8 @@ class tkinterGui(Frame):
         if self.verbose:
            print("> loading_Screen {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         self.loading_canvas = Canvas(self.loading_frame, width=310, height=120)
-        img = ImageTk.PhotoImage(Image.open('file\\png\\new_error.png').resize((310, 120), Image.ANTIALIAS))  #
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        img = ImageTk.PhotoImage(Image.open(my_path + '\\file\\png\\new_error.png').resize((310, 120), Image.Resampling.LANCZOS))  #
         self.loading_canvas.background = img  #
         bg_pic = self.loading_canvas.create_image(0, 0, anchor=NW, image=img)
         self.loading_canvas.grid(row=0, column=0, rowspan=310, columnspan=120)
@@ -384,7 +392,7 @@ class tkinterGui(Frame):
         self.parent.geometry("147x197")
         self.loading_frame.grid_remove()
         self.InitGui()
-        self.check_update()
+        # self.check_update()
         if self.verbose:
            print("< loading_variables_destroy {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
     def open_help(self):
@@ -396,7 +404,8 @@ class tkinterGui(Frame):
         popup.geometry("720x735")
         popup.title("Sample Inventory Lineup")
         canvas = Canvas(popup, width=720, height=735)
-        img = ImageTk.PhotoImage(Image.open('file\\png\\dizilim.png').resize((720, 735), Image.ANTIALIAS))  #
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        img = ImageTk.PhotoImage(Image.open(my_path + '\\file\\png\\dizilim.png').resize((720, 735), Image.Resampling.LANCZOS))  #
         canvas.background = img  #
         bg_pic = canvas.create_image(0, 0, anchor=NW, image=img)
         canvas.grid(row=0, column=0, rowspan=720, columnspan=735)
@@ -409,7 +418,8 @@ class tkinterGui(Frame):
         popup.geometry("415x235")
         popup.title("Incoming Attachment Statistics")
         canvas = Canvas(popup, width=720, height=735)
-        img = ImageTk.PhotoImage(Image.open('file\\png\\bg.png').resize((720, 735), Image.ANTIALIAS))  #
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        img = ImageTk.PhotoImage(Image.open(my_path + '\\file\\png\\bg.png').resize((720, 735), Image.Resampling.LANCZOS))  #
         canvas.background = img  #
         canvas.grid(row=0, column=0, rowspan=720, columnspan=735)
 
@@ -429,7 +439,6 @@ class tkinterGui(Frame):
         if self.verbose:
            print("< open_statistic {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
     def copy_uuid(self):
-
        pyperclip.copy(self.uuid.get())
     def change_language(self,language):
         if self.verbose:
@@ -504,20 +513,21 @@ class tkinterGui(Frame):
                     if keyboard.is_pressed('space'):
                         exit = False
     def return_licences(self):
-        if self.verbose:
-           print("> return_licences {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
+        return True
+        # if self.verbose:
+        #    print("> return_licences {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
         
-        link = self.config.return_read(self.info_path,"info","licences")+ str(subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip()) + ".txt"
-        sorgu = requests.head(link, allow_redirects=True)
-        if sorgu.status_code == 200:
-            if self.verbose:
-                print("< return_licences {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
-            return True
+        # link = self.config.return_read(self.info_path,"info","licences")+ str(subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip()) + ".txt"
+        # sorgu = requests.head(link, allow_redirects=True)
+        # if sorgu.status_code == 200:
+        #     if self.verbose:
+        #         print("< return_licences {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
+        #     return True
                  
-        else:
-            if self.verbose:
-                print("< return_mongosb {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
-            return False
+        # else:
+        #     if self.verbose:
+        #         print("< return_mongosb {}".format(datetime.datetime.today().strftime("%H:%M:%S")))
+        #     return False
     
     def delete_items(self):
         self.remove_all_frame()
@@ -525,7 +535,8 @@ class tkinterGui(Frame):
         self.parent.geometry("340x102")
         self.deleteItemFrame.grid(row=0,column=0)
         self.delete_item_canvas = Canvas(self.deleteItemFrame, width=340, height=102)
-        img = ImageTk.PhotoImage(Image.open('file\\png\\error.png').resize((340, 102), Image.ANTIALIAS))  #
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        img = ImageTk.PhotoImage(Image.open(my_path + '\\file\\png\\error.png').resize((340, 102), Image.Resampling.LANCZOS))  #
         self.delete_item_canvas.background = img  #
         bg_pic = self.delete_item_canvas.create_image(0, 0, anchor=NW, image=img)
         self.delete_item_canvas.grid(row=0, column=0, rowspan=340, columnspan=102)
@@ -593,7 +604,8 @@ class tkinterGui(Frame):
         self.parent.geometry("630x250")
         # Search attachment
         self.canvas = Canvas(self.chrome_search_attachment, width=630, height=250)
-        img = ImageTk.PhotoImage(Image.open('file\\png\\chrome_wallpaper.png').resize((630, 250), Image.ANTIALIAS))  #
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        img = ImageTk.PhotoImage(Image.open(my_path + '\\file\\png\\chrome_wallpaper.png').resize((630, 250), Image.Resampling.LANCZOS))  #
         self.canvas.background = img  #
         bg_pic = self.canvas.create_image(0, 0, anchor=NW, image=img)
         self.canvas.grid(row=0, column=0, rowspan=630, columnspan=250)
@@ -948,8 +960,11 @@ class tkinterGui(Frame):
             self.passwd.delete(0, END)
 class config_parser:
     def return_read(address,id1,id2):
+        print(address)
         config = configparser.ConfigParser()
         config.read(address)
+        print(id1,id2)
+        print(config)
         ans = config[id1][id2]
         return ans
     def write(address,name,new_name):
@@ -968,7 +983,9 @@ class config_parser:
 class database:
     def __init__(self):
         self.info = configparser.ConfigParser()
-        self.path = "file\\"
+
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        self.path = my_path+ "\\file\\"
         self.info.read(self.path+"config.ini")
 
     def create(self):
@@ -1027,7 +1044,8 @@ class database:
         baglan = sqlite3.connect(self.path + self.info["info"]["attachments_statistics"])
         veri = baglan.cursor()
         for name in attachments:
-            ekler = sqlite3.connect("file\\" + name)
+            my_path = os.path.abspath(os.path.dirname(__file__))
+            ekler = sqlite3.connect(my_path + "\\file\\" + name)
             data = ekler.cursor()
             values = data.execute("select * from attachments_list").fetchall()
             for atchet in values:
@@ -1127,7 +1145,8 @@ class FancyListbox(tkinter.Listbox):
     def __init__(self, parent, *args, **kwargs):
         tkinter.Listbox.__init__(self, parent, *args, **kwargs)
         self.popup_menu = tkinter.Menu(self, tearoff=0)
-        self.path = "file\\"
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        self.path = my_path+ "\\file\\"
         self.info = configparser.ConfigParser()
         self.info.read(self.path + "config.ini")
 
@@ -1193,7 +1212,8 @@ class search:
         Screenshot = pyautogui.screenshot()
         Screenshot.save("image/ek.png")
     def crop_image(self):
-        path = "file\\"
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = my_path+ "\\file\\"
         info = configparser.ConfigParser()
         info.read(path + "config.ini")
         position = info[info["info"]["resolition"]]["img_right_area"].split(",")
