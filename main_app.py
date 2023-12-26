@@ -24,38 +24,28 @@ def compare_code():
 
 
 
-compare_code()
+# compare_code()
 
 import datetime
 from time import sleep,strftime
 import threading
 import sqlite3
 import pyperclip
-from PIL import Image, ImageTk, ImageFont, ImageDraw
 import keyboard
 import mouse
-import pyautogui
-import cv2
-import pytesseract
 from functools import partial
-import win32api
-import win32con 
-import ctypes
 from PIL import Image
 import datetime
 import json
 from collections import namedtuple
-
+from pymongo.mongo_client import MongoClient
 from main_ui import Ui_MainWindow
 import sys
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import  Qt, QUrl,QSize,QObject, pyqtSignal, pyqtSlot, QTimer,QRect,QMetaEnum
-from PyQt5.QtGui import QKeyEvent,QCloseEvent,QPixmap,QIcon,QPalette, QImage
+from PyQt5.QtCore import  Qt,QSize, pyqtSlot, QTimer,QRect
+from PyQt5.QtGui import QKeyEvent,QPixmap,QIcon, QImage
 import sqlite3
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
-from PyQt5.QtMultimediaWidgets import QVideoWidget
-from threading import Thread
 from random import randint
 from time import strftime
 import requests
@@ -64,9 +54,14 @@ class defaults():
     def __init__(self):
         self.api_key = "Gork3m-Player-Z5X96djv"
         self.istek_url = "https://api.chromerivals.net/"
-        self.save_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\file\\"
-        self.save_db_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\db\\"
-        self.bosses_ids = {"764182069386432500":"Hornian Queen","761944773358538800":"Mountain Sage","763119997668053000":"Messenger","764588735659528200":"Pathos","761944773417259000":"Prog. Military Base","764588486207492100":"Energy Core","763156516252438500":"Shirne","764588735747608600":"Nipar Bridge","764182069545816000":"Quetzalcoatl","764588735781163000":"Gryphon","764199142942593000":"Rock Emperor","764111152580939800":"Ordin","764273742804176900":"Azimuth","763156515245805600":"Egma Schill","764182736305934300":"Skadi","762916803910324200":"Gigantic God","761950599683002400":"Bishop Black","762284072524337200":"Bishop Green","761950599590727700":"Bishop Blue","761950599724945400":"Bishop Red","764182736435957800":"Sekhmete","764280926703210500":"Black Widow","764182736767307800":"Echelon","764182736704393200":"Guardian of Vatallus","762172289146966000":"RM-230","762284072566280200":"Eater","762284072604028900":"Death Worm","762284072750829600":"NGC Calcani","762284072692109300":"Overlord-01","762284072889241600":"Saleos","762284072956350500":"Tetzlica","762284073019265000":"Overhead Completion","762172820695306200":"Lord Kreacia","762284072637583400":"NGC Mothership"}
+        self.uri = "mongodb+srv://ercansezdizero:gSYctsmB1GRcSjjd@cluster0.yvcr1u2.mongodb.net/?retryWrites=true&w=majority"
+        #current path
+        self.path = os.getcwd()
+        self.save_path = self.path + "\\file\\"
+        self.save_db_path = self.path + "\\db\\"
+        # self.save_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\file\\"
+        # self.save_db_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\db\\"
+        self.bosses_ids = {"764182069386432500":"Hornian Queen","761944773358538800":"Mountain Sage","763119997668053000":"Messenger","764588735659528200":"Pathos","761944773417259000":"Prog. Military Base","764588486207492100":"Energy Core","763156516252438500":"Shirne","764588735747608600":"Nipar Bridge","764182069545816000":"Quetzalcoatl","764588735781163000":"Gryphon","764199142942593000":"Rock Emperor","764111152580939800":"Ordin","764273742804176900":"Azimuth","763156515245805600":"Egma Schill","764182736305934300":"Skadi","762916803910324200":"Gigantic God","761950599683002400":"Bishop Black","762284072524337200":"Bishop Green","761950599590727700":"Bishop Blue","761950599724945400":"Bishop Red","764182736435957800":"Sekhmete","764280926703210500":"Black Widow","764182736767307800":"Echelon","7641827367043918000":"Guardian of Vatallus","762172289146966000":"RM-230","762284072566280200":"Eater","762284072604028900":"Death Worm","762284072750829600":"NGC Calcani","762284072692109300":"Overlord-01","762284072889241600":"Saleos","762284072956350500":"Tetzlica","762284073019265000":"Overhead Completion","762172820695306200":"Lord Kreacia","762284072637583400":"NGC Mothership"}
         self.weapon_re_attachment = ["Legend", "Bio", "Meteo", "Ultra", "Deus", "Trekki", "Tachyon", "Terra", "Solace", "Attack", "Silence", "Faith", "Faithful", "Elite", "Chimera", "Epic", "Ether", "Amazing", "Criminal", "Shooting-Star", "Judgement", "Dispel", "Glacial", "Nova", "Universe", "Double", "Hell", "Flare", "Bite", "Hera"]
         self.armor_eva_attachment  = ["Ose", "Critter", "Macha", "Maurader", "Metatron", "Methadrone", "Miasma", "Origin", "Orobas", "Caina", "Tyranny"]
         self.armor_exp_attachment = ["Azatoth", "Aeon", "Cross", "Oberon", "Ovid", "Creed", "Avnas"]
@@ -78,14 +73,66 @@ class defaults():
         self.wepoan_pierce_attachment = ["Bandit", "Adversary", "Bane", "Challenger"]
         self.total_p_s = ["zirh_p_basma", "zirh_p_silme", "zirh_s_basma", "zirh_s_silme", "pet_p_basma", "pet_p_silme", "pet_s_basma", "pet_s_silme", "silah_p_basma", "silah_p_silme", "silah_s_basma", "silah_s_silme","total"]
         self.attachment_names = ["weapon_re_attachment", "armor_eva_attachment", "armor_exp_attachment", "armor_drop_attachment", "pet_attachment", "wepaon_prob_attachment", "weapon_attack_attachment", "armor_pierce_attachment", "wepoan_pierce_attachment","total_p_s"]
-
-        
+        self.mongodb_boss_list = ["Energy Core", 
+                                    "Gryphon", 
+                                    "Nipar Bridge", 
+                                    "Pathos",  
+                                    "Quetzalcoatl", 
+                                    "Shrine", 
+                                    "Hornian King", 
+                                    "Hornian Queen", 
+                                    "Messenger",
+                                    "Mountain Sage", 
+                                    "Egma Schill", 
+                                    "Gigantic God", 
+                                    "Ordin", 
+                                    "Rock Emperor", 
+                                    "Skadi", 
+                                    "Black Widow", 
+                                    "Echelon", 
+                                    "Bishop Black", 
+                                    "Bishop Blue", 
+                                    "Bishop Green", 
+                                    "Bishop Orange", 
+                                    "Bishop Rainbow", 
+                                    "Bishop Red", 
+                                    "Guardian of Vatallus", 
+                                    "RM-230", 
+                                    "Sekhmete"]
         self.total_drop_item_count = 6611
+        self.boss_list_up_time = {"Energy Core": 1800, # 30 - 60 dk arası
+                                   "Gryphon": 1800, # 30 - 60 dk arası
+                                    "Nipar Bridge": 1800, #30 - 60 dk arası  
+                                    "Pathos": 1800,  #30 - 60 dk arası
+                                    "Quetzalcoatl": 1800,  #30 - 60 dk arası
+                                    "Shrine": 1800,   #30 - 60 dk arası
+                                    "Hornian King": 1800,  #30 - 60 dk arası
+                                    "Hornian Queen": 1800,  #30 - 60 dk arası
+                                    "Messenger": 1800,  #30 - 60 dk arası
+                                    "Mountain Sage": 1800, #30 - 60 dk arası
+                                    "Egma Schill": 9000,  #2.5 - 3 saat arası
+                                    "Gigantic God": 5400,  #1.5 - 2 saat arası
+                                    "Ordin": 1800,  #30 - 60 dk arası
+                                    "Rock Emperor": 1800,  #30 - 60 dk arası
+                                    "Skadi": 1800,  #30 - 60 dk arası
+                                    "Black Widow": 9000,  #2.5 - 3 saat arası
+                                    "Echelon": 9000,  #2.5 - 3 saat arası
+                                    "Bishop Black": 9000,  #2.5 - 3 saat arası
+                                    "Bishop Blue": 9000,  #2.5 - 3 saat arası
+                                    "Bishop Green": 9000,  #2.5 - 3 saat arası
+                                    "Bishop Orange": 9000,  #2.5 - 3 saat arası
+                                    "Bishop Rainbow": 9000,  #2.5 - 3 saat arası
+                                    "Bishop Red": 9000,  #2.5 - 3 saat arası
+                                    "Guardian of Vatallus": 9000,  #2.5 - 3 saat arası
+                                    "RM-230": 16200,  #4.5 - 5 saat arası
+                                    "Sekhmete": 12600} #3.5 - 4 saat arası
+        
 class create_sql():
     def __init__(self,type_):
         self.default = defaults()
         # self.start_for_bosses()
         # self.start_for_attachments()
+        
         self.start_for_id_pass()
     def start_for_id_pass(self):
         self.firstTime = True
@@ -170,11 +217,16 @@ class create_sql():
         # self.database = create_sql("attachments")
     # def get_firstTime(self):
     #     return self.firstTime
+
+
 class database():
     def __init__(self):
         self.default = defaults()
         self.db = sqlite3.connect( self.default.save_db_path + "airrivals_database.db")
         self.cursor = self.db.cursor()
+        self.mongo_client = MongoClient(self.default.uri)
+        self.mongo_db = self.mongo_client["galaxyrivals"]
+        self.mongo_collection = self.mongo_db["bosses"]
     def get_bosses(self):
         self.cursor.execute("SELECT * FROM bosses_ids")
         return self.cursor.fetchall()
@@ -287,7 +339,41 @@ class database():
                 return self.cursor.fetchall()
             except:
                 return []
+    def get_mongodb_data(self):
+        bosslist = {}
+        for i in self.mongo_collection.find():
+            for boss_name in i:
+                if boss_name != "_id" and boss_name != "date" and boss_name != "permission" and boss_name != "Prog. Military Base" and "user" not in boss_name and boss_name != "Control Tower":
+                    bosslist[boss_name] = i[boss_name]
+        return bosslist
+    def update_mongodb_data(self, boss_name, date):
+        now_date = datetime.datetime.now().strftime("%d/%m/%y_%H:%M:%S")
+        self.mongo_collection.update_many({},{"$set":{boss_name:date}})
+        self.mongo_collection.update_many({},{"$set":{"date":now_date}})
 
+    def get_mongodb_users(self):
+        users = []
+        for i in self.mongo_collection.find():
+            for j in i:
+                if "user" in j:
+                    users.append(i[j])
+        return users
+    def update_mongodb_users(self, users):
+        all_user = self.get_mongodb_users()
+        if len(all_user) == 0:
+            self.mongo_collection.update_many({},{"$set":{"user0":users}})
+        else:
+            self.mongo_collection.update_many({},{"$set":{"user"+str(len(all_user)):users}})
+    def update_mongo_ask(self, ask):
+        self.mongo_collection.update_many({},{"$set":{"permission":str(ask)}})
+    def permission_for_ask(self):
+        for i in self.mongo_collection.find():
+            for j in i:
+                if j == "permission":
+                    if i[j] == "True":
+                        return True
+                    else:
+                        return False
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -307,7 +393,6 @@ class MainWindow(QMainWindow):
         self.headers = {'accept': '*/*',
                     'Cr-Api-Key': self.default.api_key,}
         
-
         self.ui.show_boss.clicked.connect(partial(self.ui.stackedWidget.setCurrentIndex, 1))
         self.ui.show_boss.clicked.connect(lambda: self.open_boss_page())
         self.ui.general_search.clicked.connect(lambda: self.open_search_page())
@@ -339,21 +424,121 @@ class MainWindow(QMainWindow):
         self.ui.stop_macro.clicked.connect(lambda: self.stop_all_macro())
 
 
+        self.ui.boss_timer.clicked.connect(lambda: self.open_boss_timer())
+
+
         self.ui.chart.hide()
         self.ui.label_6.hide()
-
-
-
         """
         self.get_kills(filter = None ) -- filter verilirse sadece o isimdeki killleri getirir
         """
         self.setup_for_app()
         self.get_news()
         self.ui.stackedWidget.setCurrentIndex(0)
+        # veri = {"username":"ahmet","passwd":"ahmet"}
+        # self.database.update_mongodb_users(veri)
+        # self.database.update_mongo_ask("False")
+        if self.database.permission_for_ask():
+            self.ask_password()
 
         ###############
         # self.open_search_attachment_page()
-        self.open_macro_page()
+        # self.open_macro_page()
+    def close_info_page(self):
+        self.ui.frame_10.hide()
+        self.ui.frame_7.hide()
+        self.ui.frame_8.hide()
+        self.ui.frame_9.hide()
+        self.ui.frame.hide()
+        self.ui.app_bar.hide()
+        self.setStyleSheet("background-color: rgb(0, 0, 0);")
+    def open_info_page(self):
+        self.ui.frame_10.show()
+        self.ui.frame_7.show()
+        self.ui.frame_8.show()
+        self.ui.frame_9.show()
+        self.ui.frame.show()
+        self.ui.app_bar.show()
+        self.setStyleSheet("background-color: rgb(76, 185, 231);")
+    def ask_password(self):
+        self.close_info_page()
+        self.password_widget = QWidget()
+        self.password_widget.setStyleSheet("background-color: rgb(0, 0, 0);")
+        self.password_widget.setObjectName("password_widget")
+        self.password_widget.resize(400, 200)
+        self.password_widget.setMinimumSize(QtCore.QSize(400, 250))
+        self.password_widget.setMaximumSize(QtCore.QSize(400, 250))
+        self.password_widget.setWindowTitle("Şifre")
+        self.password_widget.setWindowIcon(QIcon(":/new/chromerivals_logo.png"))
+        self.password_widget.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint |QtCore.Qt.FramelessWindowHint)
+        self.password_widget.setWindowModality(QtCore.Qt.ApplicationModal)
+
+
+        self.password_widget.show()
+        #create layout
+        self.password_layout = QVBoxLayout()
+        self.password_layout.setObjectName("password_layout")
+        self.password_widget.setLayout(self.password_layout)
+        #create combobox
+
+        self.username_line = QLineEdit()
+        self.username_line.setObjectName("username_line")
+        self.username_line.setStyleSheet("background-color: rgb(255, 255, 255); font: 700 12pt \"Segoe UI\";")
+        self.username_line.setMinimumSize(QtCore.QSize(380, 50))
+        self.username_line.setMaximumSize(QtCore.QSize(380, 50))
+        self.username_line.setPlaceholderText("Kullanıcı Adı")
+        self.password_layout.addWidget(self.username_line)
+
+        self.password_line = QLineEdit()
+        self.password_line.setObjectName("password_line")
+        self.password_line.setStyleSheet("background-color: rgb(255, 255, 255); font: 700 12pt \"Segoe UI\";")
+        self.password_line.setMinimumSize(QtCore.QSize(380, 50))
+        self.password_line.setMaximumSize(QtCore.QSize(380, 50))
+        self.password_line.setEchoMode(QLineEdit.Password)
+        self.password_line.setPlaceholderText("Şifre")
+        self.password_layout.addWidget(self.password_line)
+        #create button
+        self.password_button = QPushButton()
+        self.password_button.setObjectName("password_button")
+        self.password_button.setStyleSheet("background-color: rgb(255, 255, 255); font: 700 12pt \"Segoe UI\";")
+        self.password_button.setMinimumSize(QtCore.QSize(380, 50))
+        self.password_button.setMaximumSize(QtCore.QSize(380, 50))
+        self.password_button.setText("Giriş")
+        self.password_button.clicked.connect(lambda: self.password_button_clicked())
+        self.password_layout.addWidget(self.password_button)
+
+        self.password_button = QPushButton()
+        self.password_button.setObjectName("close_button")
+        self.password_button.setStyleSheet("background-color: rgb(255, 255, 255); font: 700 12pt \"Segoe UI\";")
+        self.password_button.setMinimumSize(QtCore.QSize(380, 50))
+        self.password_button.setMaximumSize(QtCore.QSize(380, 50))
+        self.password_button.setText("Kapat")
+        self.password_button.clicked.connect(lambda: self.close_app())
+        self.password_layout.addWidget(self.password_button)
+
+        self.password_widget.show()
+        #no top bar
+
+    def password_button_clicked(self):
+        if self.request_result():
+            self.password_widget.close()
+            self.show()
+            self.open_info_page()
+        else:
+            QMessageBox.warning(self, "Warning", "Wrong password")
+    def close_app(self):
+        self.password_widget.close()
+        self.close()
+    def request_result(self):
+        passwd = self.password_line.text()
+        username = self.username_line.text()
+        users = self.database.get_mongodb_users()
+        for i in users:
+            if i["username"] == username and i["passwd"] == passwd:
+                return True
+        return False
+
+
 
     def set_p_macro(self):
         macros_names = self.database.get_macro()
@@ -487,8 +672,128 @@ class MainWindow(QMainWindow):
         result = result or (self.ui.s_izin.isChecked() and self.ui.s_macro_basma_adi.text() != "" and self.ui.s_macro_silme_adi.text() != "" and self.ui.s_ek_sayi != "" and int(self.ui.s_ek_sayi.text()) > 0 and self.ui.aranan_son_ek.count() > 0)
         return result
     def start_attachment(self):
-        if(self.check_startable_attachment()):
-            QTimer.singleShot(1000, self.start_attachment_now)
+
+        #arka plana al
+        self.hide()
+        self.create_attachment()
+        # if(self.check_startable_attachment()):
+        #     QTimer.singleShot(1000, self.start_attachment_now)
+    def create_attachment(self):
+        self.widget = QWidget()
+        self.widget.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint |QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
+        self.widget.setStyleSheet("background-color: rgba(255, 255, 255,30);")
+        self.widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        #konum olarak ekranin sağ üst köşesine al
+        self.widget.setGeometry(QRect(0, 0, 400, 200))
+        self.widget.setObjectName("widget")
+        self.widget.resize(400, 200)
+        # self.widget.setMinimumSize(QtCore.QSize(400, 200))                                                     
+        # self.widget.setMaximumSize(QtCore.QSize(400, 200))
+        self.widget.setWindowTitle("Makro çalışıyor")
+        self.widget.setWindowIcon(QIcon(":/new/chromerivals_logo.png"))
+        self.widget.setWindowModality(QtCore.Qt.ApplicationModal)
+        #hide top bar 
+
+        self.widget.show()
+
+        # p ön ek için label, p ön ek için silme label, s ön ek için label, s ön ek için silme label, toplam label, durdur button
+
+        self.widget_layout = QVBoxLayout()
+        self.widget_layout.setObjectName("widget_layout")
+        self.widget.setStyleSheet("background-color: rgba(255, 255, 255, 10);")
+        self.widget.setLayout(self.widget_layout)
+
+        self.p_on_ek_label = QLabel()
+        self.p_on_ek_label.setObjectName("p_on_ek_label")
+        self.p_on_ek_label.setStyleSheet("background-color: rgba(255, 255, 255,30); font: 700 12pt \"Segoe UI\";")
+        self.p_on_ek_label.setMinimumSize(QtCore.QSize(380, 50))
+        self.p_on_ek_label.setMaximumSize(QtCore.QSize(380, 50))
+        self.p_on_ek_label.setText("P ön ek için: " + str(self.aranan_on_ek_sayisi) + " arandi.")
+        self.widget_layout.addWidget(self.p_on_ek_label)
+
+        self.s_on_ek_label = QLabel()
+        self.s_on_ek_label.setObjectName("s_on_ek_label")
+        self.s_on_ek_label.setStyleSheet("background-color: rgba(255, 255, 255,30); font: 700 12pt \"Segoe UI\";")
+        self.s_on_ek_label.setMinimumSize(QtCore.QSize(380, 50))
+        self.s_on_ek_label.setMaximumSize(QtCore.QSize(380, 50))
+        self.s_on_ek_label.setText("S ön ek için: " + str(self.aranan_son_ek_sayisi) + " arandi.")
+        self.widget_layout.addWidget(self.s_on_ek_label)
+
+        self.toplam_label = QLabel()
+        self.toplam_label.setObjectName("toplam_label")
+        self.toplam_label.setStyleSheet("background-color: rgba(255, 255, 255,30); font: 700 12pt \"Segoe UI\";")   
+        self.toplam_label.setMinimumSize(QtCore.QSize(380, 50))
+        self.toplam_label.setMaximumSize(QtCore.QSize(380, 50))
+        self.toplam_label.setText("Toplam: " + str(self.aranan_on_ek_sayisi +  self.aranan_son_ek_sayisi) + " arandi.")
+        self.widget_layout.addWidget(self.toplam_label)
+
+        # add plain text edit
+
+        self.plain_text_edit = QPlainTextEdit()
+        self.plain_text_edit.setObjectName("plain_text_edit")
+        self.plain_text_edit.setStyleSheet("background-color: rgba(255, 255, 255,10); font: 700 12pt \"Segoe UI\";")
+        self.plain_text_edit.setMinimumSize(QtCore.QSize(380, 250))
+        self.plain_text_edit.setMaximumSize(QtCore.QSize(380, 250))
+        self.plain_text_edit.setReadOnly(True)
+        #set transparent
+        self.plain_text_edit.viewport().setAutoFillBackground(False)
+        self.plain_text_edit.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.widget_layout.addWidget(self.plain_text_edit)
+
+        self.durdur_button = QPushButton()
+        self.durdur_button.setObjectName("durdur_button")
+        self.durdur_button.setStyleSheet("background-color: rgba(255, 255, 255,90); font: 700 12pt \"Segoe UI\";")
+        self.durdur_button.setMinimumSize(QtCore.QSize(380, 50))
+        self.durdur_button.setMaximumSize(QtCore.QSize(380, 50))
+        self.durdur_button.setText("Durdur")
+        self.durdur_button.clicked.connect(lambda: self.get_all_all())
+        self.widget_layout.addWidget(self.durdur_button)
+        QTimer.singleShot(50, self.update_all_all)
+    def update_all_all(self):
+        try:
+            add_text = ""
+            if self.gelen_son_on_ek != []:
+                add_text += str(self.gelen_son_on_ek[0])
+            self.p_on_ek_label.setText("P ön ek için: " + str(self.aranan_on_ek_sayisi) + " arandi. Son gelen on ek: " + add_text)
+            if self.gelen_son_son_ek != []:
+                add_text += str(self.gelen_son_son_ek[0])
+            self.s_on_ek_label.setText("S ön ek için: " + str(self.aranan_son_ek_sayisi) + " arandi. Son gelen son ek: " + add_text)
+            self.toplam_label.setText("Toplam: " + str(self.aranan_on_ek_sayisi +  self.aranan_son_ek_sayisi) + " arandi.")
+            self.aranan_on_ek_sayisi += 1
+            self.aranan_son_ek_sayisi += 1
+            ekler = ""
+
+            for i in self.gelen_son_on_ek:
+                ekler += "P ön ek için: " + str(i) + "\n"
+            for i in self.gelen_son_son_ek:
+                ekler += "S ön ek için: " + str(i) + "\n"
+            self.gelen_son_on_ek.append(self.aranan_on_ek_sayisi)
+            self.gelen_son_son_ek.append(self.aranan_on_ek_sayisi)
+            if len(self.gelen_son_on_ek) > 5:
+                self.gelen_son_on_ek.pop(0)
+            if len(self.gelen_son_son_ek) > 5:
+                self.gelen_son_son_ek.pop(0)
+            self.plain_text_edit.setPlainText(ekler)
+        except:
+            pass
+        if self.stop :
+            self.stop = False
+        else:
+            QTimer.singleShot(50, self.update_all_all)
+    def get_all_all(self):
+        self.widget.close()
+        self.stop = True
+        self.widget = None
+        self.widget_layout = None
+        self.p_on_ek_label = None
+        self.p_on_ek_silme_label = None
+        self.s_on_ek_label = None
+        self.s_on_ek_silme_label = None
+        self.toplam_label = None
+        self.durdur_button = None
+        self.gelen_son_on_ek = []
+        self.gelen_son_son_ek = []
+        self.show()
     def set_s_silme_macro(self):
         #get macros 
         macros_names = self.database.get_macro()
@@ -562,7 +867,6 @@ class MainWindow(QMainWindow):
             pass
         if self.arama_izin[1]: # s için izin verildi
             pass
-
     def s_macro_button_clicked(self):
         choosed_macro = self.macro_combobox.currentText()
         self.macro_widget.close()
@@ -575,7 +879,6 @@ class MainWindow(QMainWindow):
         self.database.add_attachment_s_macro("s_macro",  choosed_macro, "")
         macroo = self.database.get_macro_using_description(choosed_macro)
         self.attachment_p_macro = self.text_to_move_event(macroo[0][2])
-
     def p_macro_button_clicked(self):
         choosed_macro = self.macro_combobox.currentText()
         self.macro_widget.close()
@@ -588,8 +891,6 @@ class MainWindow(QMainWindow):
         self.database.add_attachment_p_macro("p_macro", choosed_macro,"")
         macroo = self.database.get_macro_using_description(choosed_macro)
         self.attachment_s_macro = self.text_to_move_event(macroo[0][2])
-
-
     def update_macro_keys(self, name):
         self.kayit = True
         self.update_key = name
@@ -602,7 +903,6 @@ class MainWindow(QMainWindow):
             self.ui.test_start_macro.setText("TEST Start ({})".format("Waiting..."))
         elif name == "save":
             self.ui.save_macro.setText("Save Macro ({})".format("Waiting..."))
-
     def ek_sayi_changed(self, name):
         if name == "p_ek_sayi":
             self.ui.label_3.setText("Aranacak On Ekler)")
@@ -619,6 +919,11 @@ class MainWindow(QMainWindow):
                 self.arama_izin[1] = True
             else:
                 self.arama_izin[1] = False
+    def open_boss_timer(self):
+        self.ui.stackedWidget.setCurrentIndex(6)
+        for i in reversed(range(self.ui.verticalLayout_26.count())): 
+            self.ui.verticalLayout_26.itemAt(i).widget().setParent(None)
+        self.create_boss_timer_table()
     def open_boss_page(self):
         self.ui.stackedWidget.setCurrentIndex(2)
         self.ui.boss_list.clear()
@@ -647,6 +952,9 @@ class MainWindow(QMainWindow):
         for i in basliklar:
             self.ui.ne_aranacak.addItem(i)
     def open_search_attachment_page(self):
+
+        # self.ui.stackedWidget.setCurrentIndex(5)
+        QMessageBox.warning(self, "Warning", "Insufficient user permission")
         self.aranacak_on_ekler = []
         self.aranacak_son_ekler = []
         self.arama_izin = [False,False]
@@ -704,7 +1012,6 @@ class MainWindow(QMainWindow):
                 else:
                     self.ui.s_macro_basma_adi.setText("Not found")
                     self.ui.s_macro_silme_adi.setText("Not found")
-        self.ui.stackedWidget.setCurrentIndex(5)
         ek_isimler = self.default.attachment_names
         self.ui.aranan_widget.clear()
         for i in ek_isimler:
@@ -712,8 +1019,10 @@ class MainWindow(QMainWindow):
                 self.ui.aranan_widget.addItem(i)
         self.ui.aranan_widget.currentIndexChanged.connect(self.aranan_widget_changed)
     def open_macro_page(self):
-        self.ui.stackedWidget.setCurrentIndex(4)
+        # self.ui.stackedWidget.setCurrentIndex(4)
+        QMessageBox.warning(self, "Warning", "Insufficient user permission")
         self.create_macro_list()
+        
     def key_to_name(self, key):
         key = int(key)
         try:
@@ -804,7 +1113,6 @@ class MainWindow(QMainWindow):
                 key_str = "Unknown"
 
         return key_str
-        
     def create_macro_list(self):
         result = self.database.get_macro_events_keys()
         if len(result) == 0:
@@ -845,7 +1153,6 @@ class MainWindow(QMainWindow):
             item3 = QTableWidgetItem(str(description))
             item3.setTextAlignment(Qt.AlignCenter)
             self.ui.macro_list.setItem(macrolar.index(i), 2, item3)
-
     def try_macro(self):
         try:
             id = self.ui.macro_list.item(self.ui.macro_list.currentRow(), 0).text()
@@ -915,7 +1222,6 @@ class MainWindow(QMainWindow):
                 self.macro_keys[3] = event.key()
                 self.ui.save_macro.setText("Save Macro ({})".format(str_hali))
             self.database.update_macro_events_keys(self.macro_keys[0],self.macro_keys[1],self.macro_keys[2],self.macro_keys[3])
-            
     def text_to_move_event(self, text):
         try:
             xoxx = []
@@ -1006,7 +1312,6 @@ class MainWindow(QMainWindow):
                     mouse.press(event.button)
             elif "MoveEvent" in str(event):
                 mouse.move(event.x, event.y)
-            print(self.last_time, self.stop)
             if not self.stop:
                 self.sira += 1
                 time = event.time - self.last_time
@@ -1024,7 +1329,6 @@ class MainWindow(QMainWindow):
             self.last_time = event.time
         except:
             pass
-
     def mouse_record(self):#f1
         self.ui.record.setEnabled(False)
         self.ui.record.setText("Kayıt Ediliyor...")
@@ -1394,6 +1698,10 @@ class MainWindow(QMainWindow):
     def print_beutiful_json (self, json_data):
         print(json.dumps(json_data, indent=4, sort_keys=True))
     def variables(self):
+        self.aranan_on_ek_sayisi = 0
+        self.aranan_son_ek_sayisi = 0
+        self.gelen_son_on_ek = []
+        self.gelen_son_son_ek = []
         self.total_count = 0
         self.update_key = ""
         self.download_percent = 0
@@ -1620,6 +1928,214 @@ class MainWindow(QMainWindow):
 
         
         self.ui.bottom_label.setText(all)
+    def create_boss_timer_table(self):
+        uzunluk = len(self.default.mongodb_boss_list)
+        self.boss_time = self.database.get_mongodb_data()
+        for i in range(0,uzunluk):
+            time_ = self.boss_time[self.default.mongodb_boss_list[i]]
+            time_ = time_.split("_")[1]
+            frame = self.create_boss_list(i, self.default.mongodb_boss_list[i],time_)
+            self.ui.verticalLayout_26.addWidget(frame)
+        QTimer.singleShot(100, self.update_boss_timer_table)
+        QTimer.singleShot(100, self.check_boss_time)
+        self.create_widget_for_boss_timer()
+        # self.random_update_all()
+    def check_boss_time(self):
+        self.boss_time = self.database.get_mongodb_data()
+        QTimer.singleShot(60000, self.check_boss_time)
+    def update_boss_timer_table(self):
+        uzunluk = len(self.default.mongodb_boss_list)
+        for i in range(0,uzunluk):
+            time_ = self.boss_time[self.default.mongodb_boss_list[i]]
+            now = datetime.datetime.now()
+            time = datetime.datetime.strptime(time_, '%Y/%m/%d_%H:%M:%S')
+            if now < time:
+                time = time - now
+                time = time.seconds
+            else:
+                time = 0
+            reel_time = time
+            time = self.seconds_to_time(time)[0]
+            time_ = time
+            self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setText(time_)
+            if reel_time == 0:
+                self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setStyleSheet("background-color: rgb(255, 0, 0);")
+                self.update_boss_time(self.default.mongodb_boss_list[i])
+            elif reel_time < 300:
+                self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setStyleSheet("background-color: rgb(0, 255, 0);")
+            else:
+                self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setStyleSheet("background-color: rgb(255, 255, 255);")
+        QTimer.singleShot(100, self.update_boss_timer_table)
+    def random_update_all(self):
+        names = self.default.mongodb_boss_list
+        for name in names:
+            now_time = datetime.datetime.now()
+            now_time = now_time + datetime.timedelta(minutes=randint(100, 1000))
+            now_time = now_time + datetime.timedelta(seconds=randint(1, 60))
+            now_time = now_time.strftime("%Y/%m/%d_%H:%M:%S")
+            self.database.update_mongodb_data(name, now_time)
+        
+    def create_boss_list(self,num, boss_name,boss_time = "00:00:00"):
+        self.frame_2 = QFrame(self.ui.scrollAreaWidgetContents)
+        # self.frame_2.setMinimumSize(QSize(780, 120))
+        self.frame_2.setMaximumSize(QSize(16777215, 120))
+        self.frame_2.setStyleSheet("background-color: rgbaa(0, 0, 0,0%);\n"
+"border-style: outset;\n"
+"border-width: 2px;\n"
+"border-radius: 15px;\n"
+"border-color: black;")
+        self.frame_2.setFrameShape(QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.frame_2.setObjectName("main_frame_" + str(num))
+        self.verticalLayout_2 = QVBoxLayout(self.frame_2)
+        self.verticalLayout_2.setObjectName("verticalLayout_2_" + str(num))
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout__" + str(num))
+        self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayout_3.setObjectName("verticalLayout_3_" + str(num))
+        self.label_2 = QLabel(self.frame_2)
+        self.label_2.setMinimumSize(QSize(80, 80))
+        self.label_2.setMaximumSize(QSize(80, 80))
+        self.label_2.setStyleSheet("background-color: rgbaa(0, 0, 0,0%);\n"
+"border-style: outset;\n"
+"border-width: 2px;\n"
+"border-radius: 15px;\n"
+"border-color: black;")
+        self.label_2.setText("")
+        try:
+            self.label_2.setPixmap(QPixmap(":/new/" + boss_name + ".png"))
+        except:
+            self.label_2.setPixmap(QPixmap(":/new/monster.png"))
+            
+        self.label_2.setScaledContents(True)
+        self.label_2.setObjectName("label_2_" + str(num))
+        self.verticalLayout_3.addWidget(self.label_2)
+        self.horizontalLayout_2.addLayout(self.verticalLayout_3)
+        self.verticalLayout_4 = QVBoxLayout()
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.label_3 = QLabel(self.frame_2)
+        self.label_3.setMinimumSize(QSize(0, 30))
+        self.label_3.setMaximumSize(QSize(16777215, 30))
+        self.label_3.setText(boss_name)
+        self.label_3.setStyleSheet("background-color: rgbaa(0, 0, 0,0%);\n"
+"border-style: outset;\n"
+"border-radius: 15px;\n"
+"border-color: black;")
+        self.label_3.setAlignment(Qt.AlignCenter)
+        self.label_3.setObjectName("label_3_" + str(num))
+        self.horizontalLayout_3.addWidget(self.label_3)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_3)
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4_" + str(num))
+        self.label_6 = QLabel(self.frame_2)
+        self.label_6.setAlignment(Qt.AlignCenter)
+        self.label_6.setMinimumSize(QSize(0, 30))
+        self.label_6.setMaximumSize(QSize(16777215, 30))
+        self.label_6.setText(boss_time)
+        self.label_6.setStyleSheet("background-color: rgbaa(0, 0, 0,0%);\n"
+"border-style: outset;\n"
+"border-radius: 15px;\n"
+"border-color: black;")
+        self.label_6.setObjectName("label_6_" + str(num))
+        self.horizontalLayout_4.addWidget(self.label_6)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout_2.addLayout(self.verticalLayout_4)
+        self.verticalLayout_5 = QVBoxLayout()
+        self.verticalLayout_5.setObjectName("verticalLayout_5_" + str(num))
+        self.pushButton = QPushButton(self.frame_2)
+        self.pushButton.setMinimumSize(QSize(80, 80))
+        self.pushButton.setMaximumSize(QSize(80, 80))
+        self.pushButton.setStyleSheet("background-color: rgbaa(0, 0, 0,0%);\n"
+"border-style: outset;\n"
+"border-width: 2px;\n"
+"border-radius: 15px;\n"
+"border-color: black;")
+        self.pushButton.setText("UPDATE")
+        self.pushButton.setObjectName("update_button_" + str(num))
+        self.pushButton.clicked.connect(lambda: self.update_boss_time(boss_name))
+
+        self.verticalLayout_5.addWidget(self.pushButton)
+        self.horizontalLayout_2.addLayout(self.verticalLayout_5)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        return self.frame_2
+    def update_boss_time(self, boss_name):
+        now_time = datetime.datetime.now()
+        respawn_time = self.default.boss_list_up_time[boss_name]
+        now_time = now_time + datetime.timedelta(seconds=respawn_time)
+        now_time = now_time.strftime("%Y/%m/%d_%H:%M:%S")
+        self.database.update_mongodb_data(boss_name, now_time)
+        self.boss_time[boss_name] = now_time
+    def create_widget_for_boss_timer(self):
+
+        self.boss_timer_widget = QWidget()
+        self.boss_timer_widget.setStyleSheet("background-color: rgba(255, 255, 255,90);")
+        self.boss_timer_widget.setObjectName("boss_timer_widget")
+        self.boss_timer_widget.resize(400, 200)
+        #sol üst köşede olmasını sağlar
+        self.boss_timer_widget.move(0, 0)
+        self.boss_timer_widget.setMinimumSize(QtCore.QSize(400, 200))
+        self.boss_timer_widget.setMaximumSize(QtCore.QSize(400, 200))
+        self.boss_timer_widget.setWindowTitle("Boss Timer")
+        self.boss_timer_widget.setWindowIcon(QIcon(":/new/chromerivals_logo.png"))
+        self.boss_timer_widget.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint  | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
+        self.boss_timer_widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        #create layout
+        self.boss_timer_layout = QVBoxLayout()
+        self.boss_timer_layout.setObjectName("boss_timer_layout")
+        self.boss_timer_widget.setLayout(self.boss_timer_layout)
+        #create table
+        self.boss_timer_table = QTableWidget()
+        self.boss_timer_table.setObjectName("boss_timer_table")
+        self.boss_timer_table.setStyleSheet("background-color: rgb(255, 0, 0,0); color: rgb(255,255,255); font: 700 12pt \"Segoe UI\";")
+        self.boss_timer_table.setMinimumSize(QtCore.QSize(400, 150))
+        self.boss_timer_table.setMaximumSize(QtCore.QSize(400, 150))
+        self.boss_timer_table.setColumnCount(2)
+        self.boss_timer_table.setRowCount(0)
+        self.boss_timer_table.setHorizontalHeaderLabels(["Boss Name", "Time"])
+        self.boss_timer_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.boss_timer_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.boss_timer_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        # no top header
+        self.boss_timer_table.verticalHeader().setVisible(False)
+        self.boss_timer_table.horizontalHeader().setVisible(False)
+        self.boss_timer_table.setSelectionMode(QAbstractItemView.NoSelection)
+        self.boss_timer_layout.addWidget(self.boss_timer_table)
+        #set transparency
+        self.boss_timer_widget.setWindowOpacity(0.5)
+
+        self.boss_timer_widget.show()
+
+             
+
+        QTimer.singleShot(100, self.create_widget_for_boss_timer_updater)
+    def create_widget_for_boss_timer_updater(self):
+        bos_times = self.get_boss_times_sorted()
+        self.boss_timer_table.setRowCount(4)
+        for i in range(0,4):
+            boss_name = bos_times[i][0]
+            boss_time = bos_times[i][1]
+            now_time = datetime.datetime.now()
+            time = boss_time - now_time
+            time = time.seconds
+            time = self.seconds_to_time(time)[0]
+            self.boss_timer_table.setItem(i, 0, QTableWidgetItem(boss_name))
+            self.boss_timer_table.setItem(i, 1, QTableWidgetItem(time))
+        QTimer.singleShot(100, self.create_widget_for_boss_timer_updater)
+    def get_boss_times_sorted(self):
+        # self.boss_time = self.database.get_mongodb_data()
+        sorted_boss_time = {}
+        for i in self.boss_time:
+            time = self.boss_time[i]
+            time = datetime.datetime.strptime(time, '%Y/%m/%d_%H:%M:%S')
+            sorted_boss_time[i] = time
+        sorted_boss_time = sorted(sorted_boss_time.items(), key=lambda x: x[1])
+        #son 4 bossu al
+        sorted_boss_time = sorted_boss_time[:4]
+
+        return sorted_boss_time
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
