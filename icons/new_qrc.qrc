@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="new">
+    <file>Habitat Crystal.png</file>
+    <file>Hornian King.png</file>
+    <file>G-ARK Crystal.png</file>
+    <file>Robbenia Crystal.png</file>
     <file>Azimuth.png</file>
     <file>Bishop Green.png</file>
     <file>Black Widow.png</file>

@@ -1,95 +1,31 @@
-"""
-Energy Core	
-Gryphon	
-Nipar Bridge	
-Pathos	
-Prog. Military Base	
-Quetzalcoatl	
-Shrine	
-Hornian King	
-Hornian Queen	
-Messenger	
-Mountain Sage	
-Control Tower	
-Egma Schill	
-Gigantic God	
-Ordin	
-Rock Emperor	
-Skadi	
-Black Widow	
-Echelon	
-Bishop Black	
-Bishop Blue	
-Bishop Green	
-Bishop Orange	
-Bishop Rainbow	
-Bishop Red	
-Guardian of Vatallus	
-RM-230	
-Sekhmete
-"""
+import cv2 
+import pytesseract
+import pyautogui
+from PIL import Image
 
+kayit_adresi = "C:/Users/trforever/Documents/GitHub/chromerivals_makro_/image/"
 
-dict_ = {
-    "Energy Core": "0000/00/00_00:00:00",
-    "Gryphon": "0000/00/00_00:00:00",
-    "Nipar Bridge": "0000/00/00_00:00:00",
-    "Pathos": "0000/00/00_00:00:00",
-    "Prog. Military Base": "0000/00/00_00:00:00",
-    "Quetzalcoatl": "0000/00/00_00:00:00",
-    "Shrine": "0000/00/00_00:00:00",
-    "Hornian King": "0000/00/00_00:00:00",
-    "Hornian Queen": "0000/00/00_00:00:00",
-    "Messenger": "0000/00/00_00:00:00",
-    "Mountain Sage": "0000/00/00_00:00:00",
-    "Control Tower": "0000/00/00_00:00:00",
-    "Egma Schill": "0000/00/00_00:00:00",   
-    "Gigantic God": "0000/00/00_00:00:00",
-    "Ordin": "0000/00/00_00:00:00",
-    "Rock Emperor": "0000/00/00_00:00:00",
-    "Skadi": "0000/00/00_00:00:00",
-    "Black Widow": "0000/00/00_00:00:00",
-    "Echelon": "0000/00/00_00:00:00",
-    "Bishop Black": "0000/00/00_00:00:00",
-    "Bishop Blue": "0000/00/00_00:00:00",
-    "Bishop Green": "0000/00/00_00:00:00",
-    "Bishop Orange": "0000/00/00_00:00:00",
-    "Bishop Rainbow": "0000/00/00_00:00:00",
-    "Bishop Red": "0000/00/00_00:00:00",
-    "Guardian of Vatallus": "0000/00/00_00:00:00",
-    "RM-230": "0000/00/00_00:00:00",
-    "Sekhmete": "0000/00/00_00:00:00"
-}
+def take_screenshot(ek_adi = "P"):
+    Screenshot = pyautogui.screenshot()
+    Screenshot.save(kayit_adresi + "screenshot.png")
+    crop_image(kayit_adresi, (0, 0, 100, 100), 'cropped.png',ek_adi)
+def crop_image(image_path, coords, saved_location, ek_adi = "P"):
+    image_obj = Image.open(image_path + "screenshot.png")
+    cropped_image = image_obj.crop(coords)
+    cropped_image.save(image_path + "cropped_.png")
+    image_to_string(image_path + "cropped_.png",ek_adi)
+def image_to_string(image_path,ek_adi = "P"):
+    image = cv2.imread(image_path)
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    text = pytesseract.image_to_string(image)
+    print(text)
+    if ek_adi == "P":
+        pass
+    else:
+        pass
 
+    return text
 
-
-"""
-username : ercansezdizero
-password : gSYctsmB1GRcSjjd
-
-"""
-from pymongo.mongo_client import MongoClient
-
-
-uri = "mongodb+srv://ercansezdizero:gSYctsmB1GRcSjjd@cluster0.yvcr1u2.mongodb.net/?retryWrites=true&w=majority"
-client = MongoClient(uri)
-
-db = client["galaxyrivals"]
-collection = db["bosses"]
-
-
-# collection.insert_one(dict_)
-
-
-
-#veri isteme 
-
-for i in collection.find():
-    print(i)
-# 
-#update all
-# collection.update_many({},{"$set":{"date":"0000/00/00_00:00:00"}}) // last update
-
-    
-
-
+if __name__ == '__main__':
+    bulunan_ek = take_screenshot()
+    print(bulunan_ek)

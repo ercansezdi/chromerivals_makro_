@@ -490,7 +490,7 @@ background-color: #FAEED1;
 </string>
                </property>
                <property name="currentIndex">
-                <number>0</number>
+                <number>4</number>
                </property>
                <widget class="QWidget" name="login_page">
                 <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1061,7 +1061,7 @@ border-radius: 15px;</string>
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="page">
+               <widget class="QWidget" name="search_page">
                 <layout class="QVBoxLayout" name="verticalLayout_13">
                  <property name="spacing">
                   <number>5</number>

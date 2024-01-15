@@ -493,13 +493,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_22.addWidget(self.frame_27)
         self.verticalLayout_18.addWidget(self.frame_20)
         self.stackedWidget.addWidget(self.makro_page)
-        self.page = QtWidgets.QWidget()
-        self.page.setObjectName("page")
-        self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.page)
+        self.search_page = QtWidgets.QWidget()
+        self.search_page.setObjectName("search_page")
+        self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.search_page)
         self.verticalLayout_13.setContentsMargins(5, 5, 5, 5)
         self.verticalLayout_13.setSpacing(5)
         self.verticalLayout_13.setObjectName("verticalLayout_13")
-        self.frame_13 = QtWidgets.QFrame(self.page)
+        self.frame_13 = QtWidgets.QFrame(self.search_page)
         self.frame_13.setStyleSheet("font: 700 10pt \"Segoe UI\";\n"
 "background-color: #FAEED1;\n"
 "")
@@ -714,7 +714,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_17.addWidget(self.start_attachment)
         self.horizontalLayout_15.addWidget(self.frame_17)
         self.verticalLayout_13.addWidget(self.frame_13)
-        self.stackedWidget.addWidget(self.page)
+        self.stackedWidget.addWidget(self.search_page)
         self.boss_timer_page = QtWidgets.QWidget()
         self.boss_timer_page.setObjectName("boss_timer_page")
         self.verticalLayout_25 = QtWidgets.QVBoxLayout(self.boss_timer_page)
@@ -756,7 +756,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

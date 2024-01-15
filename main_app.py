@@ -24,7 +24,7 @@ def compare_code():
 
 
 
-# compare_code()
+compare_code()
 
 import datetime
 from time import sleep,strftime
@@ -57,11 +57,11 @@ class defaults():
         self.uri = "mongodb+srv://ercansezdizero:gSYctsmB1GRcSjjd@cluster0.yvcr1u2.mongodb.net/?retryWrites=true&w=majority"
         #current path
         self.path = os.getcwd()
-        self.save_path = self.path + "\\file\\"
-        self.save_db_path = self.path + "\\db\\"
-        # self.save_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\file\\"
-        # self.save_db_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\db\\"
-        self.bosses_ids = {"764182069386432500":"Hornian Queen","761944773358538800":"Mountain Sage","763119997668053000":"Messenger","764588735659528200":"Pathos","761944773417259000":"Prog. Military Base","764588486207492100":"Energy Core","763156516252438500":"Shirne","764588735747608600":"Nipar Bridge","764182069545816000":"Quetzalcoatl","764588735781163000":"Gryphon","764199142942593000":"Rock Emperor","764111152580939800":"Ordin","764273742804176900":"Azimuth","763156515245805600":"Egma Schill","764182736305934300":"Skadi","762916803910324200":"Gigantic God","761950599683002400":"Bishop Black","762284072524337200":"Bishop Green","761950599590727700":"Bishop Blue","761950599724945400":"Bishop Red","764182736435957800":"Sekhmete","764280926703210500":"Black Widow","764182736767307800":"Echelon","7641827367043918000":"Guardian of Vatallus","762172289146966000":"RM-230","762284072566280200":"Eater","762284072604028900":"Death Worm","762284072750829600":"NGC Calcani","762284072692109300":"Overlord-01","762284072889241600":"Saleos","762284072956350500":"Tetzlica","762284073019265000":"Overhead Completion","762172820695306200":"Lord Kreacia","762284072637583400":"NGC Mothership"}
+        # self.save_path = self.path + "\\file\\"
+        # self.save_db_path = self.path + "\\db\\"
+        self.save_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\file\\"
+        self.save_db_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\db\\"
+        self.bosses_ids = {"764182069386432500":"Hornian Queen","761944773358538800":"Mountain Sage","763119997668053000":"Messenger","764588735659528200":"Pathos","761944773417259000":"Prog. Military Base","764588486207492100":"Energy Core","763156516252438500":"Shirne","764588735747608600":"Nipar Bridge","764182069545816000":"Quetzalcoatl","764588735781163000":"Gryphon","764199142942593000":"Rock Emperor","764111152580939800":"Ordin","764273742804176900":"Azimuth","763156515245805600":"Egma Schill","764182736305934300":"Skadi","762916803910324200":"Gigantic God","761950599683002400":"Bishop Black","762284072524337200":"Bishop Green","761950599590727700":"Bishop Blue","761950599724945400":"Bishop Red","764182736435957800":"Sekhmete","764280926703210500":"Black Widow","764182736767307800":"Echelon","7641827367043936000":"Guardian of Vatallus","762172289146966000":"RM-230","762284072566280200":"Eater","762284072604028900":"Death Worm","762284072750829600":"NGC Calcani","762284072692109300":"Overlord-01","762284072889241600":"Saleos","762284072956350500":"Tetzlica","762284073019265000":"Overhead Completion","762172820695306200":"Lord Kreacia","762284072637583400":"NGC Mothership"}
         self.weapon_re_attachment = ["Legend", "Bio", "Meteo", "Ultra", "Deus", "Trekki", "Tachyon", "Terra", "Solace", "Attack", "Silence", "Faith", "Faithful", "Elite", "Chimera", "Epic", "Ether", "Amazing", "Criminal", "Shooting-Star", "Judgement", "Dispel", "Glacial", "Nova", "Universe", "Double", "Hell", "Flare", "Bite", "Hera"]
         self.armor_eva_attachment  = ["Ose", "Critter", "Macha", "Maurader", "Metatron", "Methadrone", "Miasma", "Origin", "Orobas", "Caina", "Tyranny"]
         self.armor_exp_attachment = ["Azatoth", "Aeon", "Cross", "Oberon", "Ovid", "Creed", "Avnas"]
@@ -73,59 +73,58 @@ class defaults():
         self.wepoan_pierce_attachment = ["Bandit", "Adversary", "Bane", "Challenger"]
         self.total_p_s = ["zirh_p_basma", "zirh_p_silme", "zirh_s_basma", "zirh_s_silme", "pet_p_basma", "pet_p_silme", "pet_s_basma", "pet_s_silme", "silah_p_basma", "silah_p_silme", "silah_s_basma", "silah_s_silme","total"]
         self.attachment_names = ["weapon_re_attachment", "armor_eva_attachment", "armor_exp_attachment", "armor_drop_attachment", "pet_attachment", "wepaon_prob_attachment", "weapon_attack_attachment", "armor_pierce_attachment", "wepoan_pierce_attachment","total_p_s"]
-        self.mongodb_boss_list = ["Energy Core", 
+        self.mongodb_boss_list = [
+                                    "G-ARK Crystal",
+                                    "Habitat Crystal",
+                                    "Robbenia Crystal",
+                                    "Energy Core", 
                                     "Gryphon", 
-                                    "Nipar Bridge", 
-                                    "Pathos",  
                                     "Quetzalcoatl", 
                                     "Shrine", 
                                     "Hornian King", 
                                     "Hornian Queen", 
                                     "Messenger",
-                                    "Mountain Sage", 
                                     "Egma Schill", 
-                                    "Gigantic God", 
                                     "Ordin", 
                                     "Rock Emperor", 
                                     "Skadi", 
                                     "Black Widow", 
                                     "Echelon", 
-                                    "Bishop Black", 
-                                    "Bishop Blue", 
+                                    # "Bishop Black", 
+                                    # "Bishop Blue", 
                                     "Bishop Green", 
-                                    "Bishop Orange", 
-                                    "Bishop Rainbow", 
-                                    "Bishop Red", 
+                                    # "Bishop Orange", 
+                                    # "Bishop Rainbow", 
+                                    # "Bishop Red", 
                                     "Guardian of Vatallus", 
                                     "RM-230", 
                                     "Sekhmete"]
         self.total_drop_item_count = 6611
-        self.boss_list_up_time = {"Energy Core": 1800, # 30 - 60 dk arası
-                                   "Gryphon": 1800, # 30 - 60 dk arası
-                                    "Nipar Bridge": 1800, #30 - 60 dk arası  
-                                    "Pathos": 1800,  #30 - 60 dk arası
-                                    "Quetzalcoatl": 1800,  #30 - 60 dk arası
-                                    "Shrine": 1800,   #30 - 60 dk arası
-                                    "Hornian King": 1800,  #30 - 60 dk arası
-                                    "Hornian Queen": 1800,  #30 - 60 dk arası
-                                    "Messenger": 1800,  #30 - 60 dk arası
-                                    "Mountain Sage": 1800, #30 - 60 dk arası
-                                    "Egma Schill": 9000,  #2.5 - 3 saat arası
-                                    "Gigantic God": 5400,  #1.5 - 2 saat arası
-                                    "Ordin": 1800,  #30 - 60 dk arası
-                                    "Rock Emperor": 1800,  #30 - 60 dk arası
-                                    "Skadi": 1800,  #30 - 60 dk arası
-                                    "Black Widow": 9000,  #2.5 - 3 saat arası
-                                    "Echelon": 9000,  #2.5 - 3 saat arası
-                                    "Bishop Black": 9000,  #2.5 - 3 saat arası
-                                    "Bishop Blue": 9000,  #2.5 - 3 saat arası
-                                    "Bishop Green": 9000,  #2.5 - 3 saat arası
-                                    "Bishop Orange": 9000,  #2.5 - 3 saat arası
-                                    "Bishop Rainbow": 9000,  #2.5 - 3 saat arası
-                                    "Bishop Red": 9000,  #2.5 - 3 saat arası
-                                    "Guardian of Vatallus": 9000,  #2.5 - 3 saat arası
-                                    "RM-230": 16200,  #4.5 - 5 saat arası
-                                    "Sekhmete": 12600} #3.5 - 4 saat arası
+        self.boss_list_up_time = {"G-ARK Crystal" : 3600,
+                                    "Habitat Crystal" : 3600,
+                                    "Robbenia Crystal" : 3600,
+                                    "Energy Core": 3600, # 30 - 60 dk arası
+                                   "Gryphon": 3600, # 30 - 60 dk arası
+                                    "Quetzalcoatl": 3600,  #30 - 60 dk arası
+                                    "Shrine": 3600,   #30 - 60 dk arası
+                                    "Hornian King": 3600,  #30 - 60 dk arası
+                                    "Hornian Queen": 3600,  #30 - 60 dk arası
+                                    "Messenger": 3600,  #30 - 60 dk arası
+                                    "Egma Schill": 14400,  #2.5 - 3 saat arası
+                                    "Ordin": 7200,  #30 - 60 dk arası
+                                    "Rock Emperor": 7200,  #30 - 60 dk arası
+                                    "Skadi": 7200,  #30 - 60 dk arası
+                                    "Black Widow": 14400,  #2.5 - 3 saat arası
+                                    "Echelon": 10800,  #2.5 - 3 saat arası
+                                    "Bishop Black": 18000,  #2.5 - 3 saat arası
+                                    "Bishop Blue": 18000,  #2.5 - 3 saat arası
+                                    "Bishop Green": 18000,  #2.5 - 3 saat arası
+                                    "Bishop Orange": 18000,  #2.5 - 3 saat arası
+                                    "Bishop Rainbow": 18000,  #2.5 - 3 saat arası
+                                    "Bishop Red": 18000,  #2.5 - 3 saat arası
+                                    "Guardian of Vatallus": 18000,  #2.5 - 3 saat arası
+                                    "RM-230": 25200,  #4.5 - 5 saat arası
+                                    "Sekhmete": 21600} #3.5 - 4 saat arası
         
 class create_sql():
     def __init__(self,type_):
@@ -414,8 +413,8 @@ class MainWindow(QMainWindow):
         ####################
         self.ui.start_record_macro.clicked.connect(lambda: self.update_macro_keys("start"))
         self.ui.stop_record_macro.clicked.connect(lambda: self.update_macro_keys("stop"))
-        self.ui.test_start_macro.clicked.connect(lambda: self.update_macro_keys("save"))
-        self.ui.save_macro.clicked.connect(lambda: self.update_macro_keys("play"))
+        self.ui.test_start_macro.clicked.connect(lambda: self.update_macro_keys("play"))
+        self.ui.save_macro.clicked.connect(lambda: self.update_macro_keys("save"))
         self.ui.p_macro_ata.clicked.connect(lambda: self.set_p_macro())
         self.ui.p_silme_ata.clicked.connect(lambda: self.set_p_silme_macro())
         self.ui.s_macro_ata.clicked.connect(lambda: self.set_s_macro())
@@ -432,14 +431,21 @@ class MainWindow(QMainWindow):
         """
         self.get_kills(filter = None ) -- filter verilirse sadece o isimdeki killleri getirir
         """
+        
         self.setup_for_app()
         self.get_news()
         self.ui.stackedWidget.setCurrentIndex(0)
-        # veri = {"username":"ahmet","passwd":"ahmet"}
-        # self.database.update_mongodb_users(veri)
+        
+        
+        # new_user = {"username":"ahmet","passwd":"ahmet"}
+        # self.database.update_mongodb_users(new_user)
+
+
         # self.database.update_mongo_ask("False")
-        if self.database.permission_for_ask():
-            self.ask_password()
+
+        
+        # if self.database.permission_for_ask():
+        #     self.ask_password()
 
         ###############
         # self.open_search_attachment_page()
@@ -537,9 +543,6 @@ class MainWindow(QMainWindow):
             if i["username"] == username and i["passwd"] == passwd:
                 return True
         return False
-
-
-
     def set_p_macro(self):
         macros_names = self.database.get_macro()
         if len(macros_names) != 0:
@@ -672,12 +675,12 @@ class MainWindow(QMainWindow):
         result = result or (self.ui.s_izin.isChecked() and self.ui.s_macro_basma_adi.text() != "" and self.ui.s_macro_silme_adi.text() != "" and self.ui.s_ek_sayi != "" and int(self.ui.s_ek_sayi.text()) > 0 and self.ui.aranan_son_ek.count() > 0)
         return result
     def start_attachment(self):
-
-        #arka plana al
-        self.hide()
-        self.create_attachment()
-        # if(self.check_startable_attachment()):
-        #     QTimer.singleShot(1000, self.start_attachment_now)
+        if(self.check_startable_attachment()):
+            self.hide()
+            self.create_attachment()
+            QTimer.singleShot(1000, self.start_attachment_now)
+        else:
+            QMessageBox.warning(self, "Warning", "Lütfen ayarları kontrol ediniz.")
     def create_attachment(self):
         self.widget = QWidget()
         self.widget.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint |QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
@@ -746,41 +749,90 @@ class MainWindow(QMainWindow):
         self.durdur_button.setMinimumSize(QtCore.QSize(380, 50))
         self.durdur_button.setMaximumSize(QtCore.QSize(380, 50))
         self.durdur_button.setText("Durdur")
-        self.durdur_button.clicked.connect(lambda: self.get_all_all())
+        self.durdur_button.clicked.connect(lambda: self.stop_all_all())
         self.widget_layout.addWidget(self.durdur_button)
         QTimer.singleShot(50, self.update_all_all)
+    def start_attachment_now(self):
+    
+        if(self.arama_izin[0]): # p için izin verildi
+            self.start_macro_for_attachment(self.attachment_p_macro)
+            gelen_ek = self.gelen_ek()
+            self.gelen_son_on_ek.append(gelen_ek)
+            self.aranan_on_ek_sayisi += 1
+            if len(self.gelen_son_on_ek) > 5:
+                self.gelen_son_on_ek.pop(0)
+            if gelen_ek in self.aranacak_on_ekler:
+                self.arama_izin[0] = False
+            else:
+                self.start_macro_for_attachment(self.attachment_p_silme_macro)
+            if self.aranan_on_ek_sayisi  >=  int(self.ui.p_ek_sayi.text()) :
+                self.arama_izin[0] = False
+        if self.arama_izin[1]: # s için izin verildi
+            self.start_macro_for_attachment(self.attachment_s_macro)
+            gelen_ek = self.gelen_ek()
+            self.gelen_son_son_ek.append(gelen_ek)
+            self.aranan_son_ek_sayisi += 1
+            if len(self.gelen_son_son_ek) > 5:
+                self.gelen_son_son_ek.pop(0)
+            if gelen_ek in self.aranacak_son_ekler:
+                self.arama_izin[1] = False
+            else:
+                self.start_macro_for_attachment(self.attachment_s_silme_macro)
+
+            if self.aranan_son_ek_sayisi >=  int(self.ui.s_ek_sayi.text()):
+                self.arama_izin[1] = False
+
+        QTimer.singleShot(100, self.start_attachment_now)
+    def gelen_ek(self):
+        #resmi al, kaydet, oku, sil return et
+
+        return self.default.weapon_attack_attachment[randint(0, len(self.default.weapon_attack_attachment) - 1)]
+
+    def start_macro_for_attachment(self,macro):
+        try:
+            if len(macro) != 0:
+                mouse_event = macro[0][2]
+                mouse_event = self.text_to_move_event(mouse_event)
+                speed = macro[0][4]
+                self.mouse_events = mouse_event
+                self.go_on_macro_for_attachment(speed)
+        except:
+            pass
     def update_all_all(self):
         try:
             add_text = ""
             if self.gelen_son_on_ek != []:
-                add_text += str(self.gelen_son_on_ek[0])
+                add_text = str(self.gelen_son_on_ek[0])
             self.p_on_ek_label.setText("P ön ek için: " + str(self.aranan_on_ek_sayisi) + " arandi. Son gelen on ek: " + add_text)
             if self.gelen_son_son_ek != []:
-                add_text += str(self.gelen_son_son_ek[0])
+                add_text = str(self.gelen_son_son_ek[0])
             self.s_on_ek_label.setText("S ön ek için: " + str(self.aranan_son_ek_sayisi) + " arandi. Son gelen son ek: " + add_text)
             self.toplam_label.setText("Toplam: " + str(self.aranan_on_ek_sayisi +  self.aranan_son_ek_sayisi) + " arandi.")
-            self.aranan_on_ek_sayisi += 1
-            self.aranan_son_ek_sayisi += 1
             ekler = ""
+            total_aranan = self.aranan_on_ek_sayisi + self.aranan_son_ek_sayisi
+            if total_aranan > 5:
+                eklenecek_sayi = 5
+            else:
+                eklenecek_sayi = total_aranan
+            for sayi in range(0,eklenecek_sayi):
+                try:
+                    ekler += "P ön ek için: " + str(self.gelen_son_on_ek[sayi]) + "\n"
+                except:
+                    pass
+                try:
+                    ekler += "S ön ek için: " + str(self.gelen_son_son_ek[sayi]) + "\n"
+                except:
+                    pass
 
-            for i in self.gelen_son_on_ek:
-                ekler += "P ön ek için: " + str(i) + "\n"
-            for i in self.gelen_son_son_ek:
-                ekler += "S ön ek için: " + str(i) + "\n"
-            self.gelen_son_on_ek.append(self.aranan_on_ek_sayisi)
-            self.gelen_son_son_ek.append(self.aranan_on_ek_sayisi)
-            if len(self.gelen_son_on_ek) > 5:
-                self.gelen_son_on_ek.pop(0)
-            if len(self.gelen_son_son_ek) > 5:
-                self.gelen_son_son_ek.pop(0)
+
             self.plain_text_edit.setPlainText(ekler)
         except:
             pass
-        if self.stop :
+        if self.stop or self.arama_izin == [False, False]:
             self.stop = False
         else:
             QTimer.singleShot(50, self.update_all_all)
-    def get_all_all(self):
+    def stop_all_all(self):
         self.widget.close()
         self.stop = True
         self.widget = None
@@ -862,11 +914,6 @@ class MainWindow(QMainWindow):
         self.database.add_attachment_p_macro("p_macro",  "",choosed_macro)
         macroo = self.database.get_macro_using_description(choosed_macro)
         self.attachment_p_silme_macro = self.text_to_move_event(macroo[0][2])
-    def start_attachment_now(self):
-        if(self.arama_izin[0]): # p için izin verildi
-            pass
-        if self.arama_izin[1]: # s için izin verildi
-            pass
     def s_macro_button_clicked(self):
         choosed_macro = self.macro_combobox.currentText()
         self.macro_widget.close()
@@ -895,6 +942,7 @@ class MainWindow(QMainWindow):
         self.kayit = True
         self.update_key = name
         # self.kayit_key = None
+        print(name)
         if name == "start":
             self.ui.start_record_macro.setText("Start Record Macro ({})".format("Waiting..."))
         elif name == "stop":
@@ -953,11 +1001,27 @@ class MainWindow(QMainWindow):
             self.ui.ne_aranacak.addItem(i)
     def open_search_attachment_page(self):
 
-        # self.ui.stackedWidget.setCurrentIndex(5)
-        QMessageBox.warning(self, "Warning", "Insufficient user permission")
+        self.ui.stackedWidget.setCurrentIndex(5)
+        # QMessageBox.warning(self, "Warning", "Insufficient user permission")
+        #QlistWidget permission multiple choose aranan_listbox
+        self.ui.aranan_listbox.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.ui.aranan_on_ek.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.ui.aranan_son_ek.setSelectionMode(QAbstractItemView.MultiSelection)
         self.aranacak_on_ekler = []
         self.aranacak_son_ekler = []
-        self.arama_izin = [False,False]
+        # self.arama_izin = [False,False]
+        #########  sil ########
+        self.ui.p_izin.setChecked(True)
+        self.ui.s_izin.setChecked(True)
+        self.ui.p_ek_sayi.setText("6")
+        self.ui.s_ek_sayi.setText("12")
+        self.aranacak_on_ekler = ["Forseti"]
+        self.aranacak_son_ekler = ["Forseti"]
+        for i in self.aranacak_on_ekler:
+            self.ui.aranan_on_ek.addItem(i)
+        for i in self.aranacak_son_ekler:
+            self.ui.aranan_son_ek.addItem(i)
+        #################
         macro_adlari = self.database.get_attachment_p_s_macro(True)
         if len(macro_adlari) != 0:
             self.attachment_p_macro = None
@@ -980,13 +1044,7 @@ class MainWindow(QMainWindow):
                 else:
                     self.ui.p_macro_basma_adi.setText("Not found")
                     self.ui.p_macro_silme_adi.setText("Not found")
-                # elif i[0] == "s_macro":
-                #     try:
-                #         macroo = self.database.get_macro_using_description(i[1])
-                #         self.attachment_s_macro = self.text_to_move_event(macroo[0])
-                #         self.ui.s_macro_basma_adi.setText(i[1])
-                #     except:
-                #         self.ui.s_macro_basma_adi.setText("Not found")
+    
         else:
             self.ui.p_macro_basma_adi.setText("Not found")
             self.ui.p_macro_silme_adi.setText("Not found")
@@ -1019,10 +1077,9 @@ class MainWindow(QMainWindow):
                 self.ui.aranan_widget.addItem(i)
         self.ui.aranan_widget.currentIndexChanged.connect(self.aranan_widget_changed)
     def open_macro_page(self):
-        # self.ui.stackedWidget.setCurrentIndex(4)
-        QMessageBox.warning(self, "Warning", "Insufficient user permission")
+        self.ui.stackedWidget.setCurrentIndex(4)
+        # QMessageBox.warning(self, "Warning", "Insufficient user permission")
         self.create_macro_list()
-        
     def key_to_name(self, key):
         key = int(key)
         try:
@@ -1217,10 +1274,10 @@ class MainWindow(QMainWindow):
                 self.ui.stop_record_macro.setText("Stop Record Macro ({})".format(str_hali))
             elif self.update_key == "save":
                 self.macro_keys[2] = event.key()
-                self.ui.test_start_macro.setText("Test Start ({})".format(str_hali))
+                self.ui.save_macro.setText("Save Macro ({})".format(str_hali))
             elif self.update_key == "play":
                 self.macro_keys[3] = event.key()
-                self.ui.save_macro.setText("Save Macro ({})".format(str_hali))
+                self.ui.test_start_macro.setText("Test Start ({})".format(str_hali))
             self.database.update_macro_events_keys(self.macro_keys[0],self.macro_keys[1],self.macro_keys[2],self.macro_keys[3])
     def text_to_move_event(self, text):
         try:
@@ -1296,6 +1353,11 @@ class MainWindow(QMainWindow):
         self.stop = False
         self.sira = 0
         QTimer.singleShot(1000 , lambda: self.trigger_go_on_macro())
+    def go_on_macro_for_attachment(self,speed = 1):
+        self.last_time = 0
+        self.stop = False
+        self.sira = 0
+        self.trigger_go_on_macro_for_attachment()
     def start_macro(self,macro_name, macro_speed = 1):
         self.mouse_events = macro_name
         self.last_time = 0
@@ -1336,27 +1398,47 @@ class MainWindow(QMainWindow):
     def add_attachment(self, attachment_name):
         try:
             ek_adi = self.ui.aranan_listbox.currentItem().text()
+            all_selected = self.ui.aranan_listbox.selectedItems()
+            
         except:
             return 
         if attachment_name == "p_ekle":
             try:
-                if not ek_adi in self.aranacak_on_ekler:
-                    self.aranacak_on_ekler.append(ek_adi)
-                    self.ui.aranan_on_ek.addItem(ek_adi)
+                if len(all_selected) > 1:
+                    for ek_adi in all_selected:
+                        ek_adi = ek_adi.text()
+                        if not ek_adi in self.aranacak_on_ekler:
+                            self.aranacak_on_ekler.append(ek_adi)
+                            self.ui.aranan_on_ek.addItem(ek_adi)
+                else:
+                    if not ek_adi in self.aranacak_on_ekler:
+                        self.aranacak_on_ekler.append(ek_adi)
+                        self.ui.aranan_on_ek.addItem(ek_adi)
             except:
                 pass
         elif attachment_name == "s_ekle":
             if not ek_adi in self.aranacak_son_ekler:
                 try:
-                    self.aranacak_son_ekler.append(ek_adi)
-                    self.ui.aranan_son_ek.addItem(ek_adi)
+                    if len(all_selected) > 1:
+                        for ek_adi in all_selected:
+                            ek_adi = ek_adi.text()
+                            if not ek_adi in self.aranacak_son_ekler:
+                                self.aranacak_son_ekler.append(ek_adi)
+                                self.ui.aranan_son_ek.addItem(ek_adi)
+                    else:
+                        self.aranacak_son_ekler.append(ek_adi)
+                        self.ui.aranan_son_ek.addItem(ek_adi)
                 except:
                     pass
     def delete_attachment(self, attachment_name):
         if attachment_name == "p_sil":
             try:
-                ek_adi = self.ui.aranan_on_ek.currentItem().text()
-                self.aranacak_on_ekler.remove(ek_adi)
+                # ek_adi = self.ui.aranan_on_ek.currentItem().text()
+                all_selected = self.ui.aranan_on_ek.selectedItems()
+                for ek_adi in all_selected:
+                    ek_adi = ek_adi.text()
+                    if ek_adi in self.aranacak_on_ekler:                    
+                        self.aranacak_on_ekler.remove(ek_adi)
                 self.ui.aranan_on_ek.clear()
                 for i in self.aranacak_on_ekler:
                     self.ui.aranan_on_ek.addItem(i)
@@ -1364,8 +1446,12 @@ class MainWindow(QMainWindow):
                 pass
         elif attachment_name == "s_sil":
             try:
-                ek_adi = self.ui.aranan_son_ek.currentItem().text()
-                self.aranacak_son_ekler.remove(ek_adi)
+                # ek_adi = self.ui.aranan_son_ek.currentItem().text()
+                all_selected = self.ui.aranan_son_ek.selectedItems()
+                for ek_adi in all_selected:
+                    ek_adi = ek_adi.text()
+                    if ek_adi in self.aranacak_son_ekler:
+                        self.aranacak_son_ekler.remove(ek_adi)
                 self.ui.aranan_son_ek.clear()
                 for i in self.aranacak_son_ekler:
                     self.ui.aranan_son_ek.addItem(i)
@@ -1957,10 +2043,13 @@ class MainWindow(QMainWindow):
             reel_time = time
             time = self.seconds_to_time(time)[0]
             time_ = time
+
+            if reel_time == 0:
+                time_ = "00:00:00"
+
             self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setText(time_)
             if reel_time == 0:
                 self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setStyleSheet("background-color: rgb(255, 0, 0);")
-                self.update_boss_time(self.default.mongodb_boss_list[i])
             elif reel_time < 300:
                 self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setStyleSheet("background-color: rgb(0, 255, 0);")
             else:
@@ -1970,11 +2059,10 @@ class MainWindow(QMainWindow):
         names = self.default.mongodb_boss_list
         for name in names:
             now_time = datetime.datetime.now()
-            now_time = now_time + datetime.timedelta(minutes=randint(100, 1000))
-            now_time = now_time + datetime.timedelta(seconds=randint(1, 60))
+            # now_time = now_time + datetime.timedelta(minutes=randint(100, 1000))
+            now_time = now_time - datetime.timedelta(seconds=randint(1, 60))
             now_time = now_time.strftime("%Y/%m/%d_%H:%M:%S")
-            self.database.update_mongodb_data(name, now_time)
-        
+            self.database.update_mongodb_data(name, now_time)    
     def create_boss_list(self,num, boss_name,boss_time = "00:00:00"):
         self.frame_2 = QFrame(self.ui.scrollAreaWidgetContents)
         # self.frame_2.setMinimumSize(QSize(780, 120))
@@ -2113,29 +2201,100 @@ class MainWindow(QMainWindow):
         QTimer.singleShot(100, self.create_widget_for_boss_timer_updater)
     def create_widget_for_boss_timer_updater(self):
         bos_times = self.get_boss_times_sorted()
-        self.boss_timer_table.setRowCount(4)
-        for i in range(0,4):
-            boss_name = bos_times[i][0]
-            boss_time = bos_times[i][1]
+        self.boss_timer_table.setRowCount(5)
+        deneme_cont = 0
+        added_bos_count = 0 
+        ekle_5 = True
+        #clear self.boss_timer_table
+        for i in range(0,5):
+            self.boss_timer_table.setItem(i, 0, QTableWidgetItem(""))
+            self.boss_timer_table.setItem(i, 1, QTableWidgetItem(""))
+        while added_bos_count < 5:
+            if deneme_cont > len(bos_times) - 1:
+                break
+            boss_name = bos_times[deneme_cont][0]
+            boss_time = bos_times[deneme_cont][1]
+
+            #sadece saati karşılaştırır
+            boss_time_saat = boss_time.strftime("%H:%M:%S")
+            boss_time_date = boss_time.strftime("%Y/%m/%d")
             now_time = datetime.datetime.now()
-            time = boss_time - now_time
-            time = time.seconds
-            time = self.seconds_to_time(time)[0]
-            self.boss_timer_table.setItem(i, 0, QTableWidgetItem(boss_name))
-            self.boss_timer_table.setItem(i, 1, QTableWidgetItem(time))
+            now_time_saat = now_time.strftime("%H:%M:%S")
+            now_time_date = now_time.strftime("%Y/%m/%d")
+            #zamana çevir
+            boss_time_saat = datetime.datetime.strptime(boss_time_saat, '%H:%M:%S')
+            now_time_saat = datetime.datetime.strptime(now_time_saat, '%H:%M:%S')
+            boss_time_date = datetime.datetime.strptime(boss_time_date, '%Y/%m/%d') 
+            now_time_date = datetime.datetime.strptime(now_time_date, '%Y/%m/%d')
+            
+            time = boss_time_saat - now_time_saat
+            if boss_time_saat > now_time_saat and ekle_5 and boss_time_date == now_time_date:
+                time = time.seconds
+                time = self.seconds_to_time(time)[0]
+                self.boss_timer_table.setItem(added_bos_count, 0, QTableWidgetItem(boss_name))
+                self.boss_timer_table.setItem(added_bos_count, 1, QTableWidgetItem(time))
+                added_bos_count += 1
+            else:
+                #zaman geçmesi sadece 10 saniye ise ekle
+                gecen_saniye = now_time_saat - boss_time_saat
+                saat = gecen_saniye.seconds // 3600
+                dakika = (gecen_saniye.seconds % 3600) // 60
+                saniye = (gecen_saniye.seconds % 3600) % 60
+                gun = gecen_saniye.days
+                if gun == 0 and saat == 0 and (dakika == 0 or dakika == 1 or dakika == 2 or dakika == 3 or dakika == 4 ) and saniye < 60 and ekle_5:
+                    time = gecen_saniye.seconds
+                    time = self.seconds_to_time(time)[0]
+                    time = "-" + time
+                    self.boss_timer_table.setItem(added_bos_count, 0, QTableWidgetItem(boss_name))
+                    self.boss_timer_table.setItem(added_bos_count, 1, QTableWidgetItem(time))
+                    added_bos_count += 1
+
+            if not ekle_5:
+                time = time.seconds
+                time = self.seconds_to_time(time)[0]
+                self.boss_timer_table.setItem(added_bos_count, 0, QTableWidgetItem(boss_name))
+                self.boss_timer_table.setItem(added_bos_count, 1, QTableWidgetItem(time))
+                added_bos_count += 1
+
+            deneme_cont += 1
+            if deneme_cont > len(bos_times):
+                if added_bos_count == 0:
+                    # ekle_5 = False
+                    deneme_cont = 0
+                
+                break
         QTimer.singleShot(100, self.create_widget_for_boss_timer_updater)
-    def get_boss_times_sorted(self):
-        # self.boss_time = self.database.get_mongodb_data()
+    def compare_time(self, boss_time, now_time):
+        """
+         Şimdi zaman ile boss zamanını karşılaştırır
+         boss zamanı şimdiki zamandan geri bir tarihte ise False döndürür
+        """
+        boss_time = boss_time.split("_")
+        now_time = now_time.split("_")
+        boss_time = boss_time[0] + " " + boss_time[1]
+        now_time = now_time[0] + " " + now_time[1]
+        boss_time = datetime.datetime.strptime(boss_time, '%Y/%m/%d %H:%M:%S')
+        now_time = datetime.datetime.strptime(now_time, '%Y/%m/%d %H:%M:%S')
+        if boss_time < now_time:
+            return False
+        else:
+            return True
+    def get_boss_times_sorted(self, limit = None):
         sorted_boss_time = {}
+        now_timee = datetime.datetime.now()
+        now_timee = now_timee.strftime("%S")
+        if int(now_timee) == 0:
+            self.boss_time = self.database.get_mongodb_data()
         for i in self.boss_time:
             time = self.boss_time[i]
             time = datetime.datetime.strptime(time, '%Y/%m/%d_%H:%M:%S')
             sorted_boss_time[i] = time
         sorted_boss_time = sorted(sorted_boss_time.items(), key=lambda x: x[1])
-        #son 4 bossu al
-        sorted_boss_time = sorted_boss_time[:4]
+        if limit != None:
+            return sorted_boss_time[:limit]
+        else:
+            return sorted_boss_time
 
-        return sorted_boss_time
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
