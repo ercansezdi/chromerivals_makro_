@@ -24,7 +24,7 @@ def compare_code():
 
 
 
-compare_code()
+# compare_code()
 
 import datetime
 from time import sleep,strftime
@@ -339,11 +339,17 @@ class database():
             except:
                 return []
     def get_mongodb_data(self):
+        izinsizler = ["_id", "date", "permission", "Prog. Military Base", "Control Tower", "firmware"]
         bosslist = {}
         for i in self.mongo_collection.find():
             for boss_name in i:
-                if boss_name != "_id" and boss_name != "date" and boss_name != "permission" and boss_name != "Prog. Military Base" and "user" not in boss_name and boss_name != "Control Tower":
-                    bosslist[boss_name] = i[boss_name]
+                if  boss_name in izinsizler:
+                    pass
+                else:
+                    if not "user" in boss_name:
+                        bosslist[boss_name] = i[boss_name]
+                    else:
+                        pass
         return bosslist
     def update_mongodb_data(self, boss_name, date):
         now_date = datetime.datetime.now().strftime("%d/%m/%y_%H:%M:%S")
@@ -373,7 +379,12 @@ class database():
                         return True
                     else:
                         return False
-
+    def get_firmware_version(self):
+        for i in self.mongo_collection.find():
+            for j in i:
+                if j == "firmware":
+                    return i[j]
+        
 class MainWindow(QMainWindow):
     def __init__(self):
         super(QMainWindow,self).__init__()
@@ -382,7 +393,7 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         #full screen
         # self.showMaximized()
-        self.applicatin_version = "1.4.2"
+        self.applicatin_version = "v102"
         self.setWindowIcon(QIcon(":/new/chromerivals_logo.png"))
         self.setWindowTitle("Chromerivals Makro")
         self.default = defaults()
@@ -443,13 +454,13 @@ class MainWindow(QMainWindow):
 
         # self.database.update_mongo_ask("False")
 
-        
+        if self.database.get_firmware_version() != self.applicatin_version:
+            QMessageBox.warning(self, "Yazılım", "Lütfen yazılımı güncelleyin.")
+            exit()
+
         # if self.database.permission_for_ask():
         #     self.ask_password()
 
-        ###############
-        # self.open_search_attachment_page()
-        # self.open_macro_page()
     def close_info_page(self):
         self.ui.frame_10.hide()
         self.ui.frame_7.hide()
@@ -2035,6 +2046,9 @@ class MainWindow(QMainWindow):
             time_ = self.boss_time[self.default.mongodb_boss_list[i]]
             now = datetime.datetime.now()
             time = datetime.datetime.strptime(time_, '%Y/%m/%d_%H:%M:%S')
+            reel_timex = str(time_)
+            reel_timex = reel_timex.split("_")
+            reel_timex = "[  "    + reel_timex[0] + "  " + reel_timex[1] + "  ]"
             if now < time:
                 time = time - now
                 time = time.seconds
@@ -2047,7 +2061,7 @@ class MainWindow(QMainWindow):
             if reel_time == 0:
                 time_ = "00:00:00"
 
-            self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setText(time_)
+            self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setText("[ "+ time_ + "]    " + reel_timex)
             if reel_time == 0:
                 self.ui.scrollAreaWidgetContents.findChild(QLabel, "label_6_" + str(i)).setStyleSheet("background-color: rgb(255, 0, 0);")
             elif reel_time < 300:
@@ -2082,8 +2096,8 @@ class MainWindow(QMainWindow):
         self.verticalLayout_3 = QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3_" + str(num))
         self.label_2 = QLabel(self.frame_2)
-        self.label_2.setMinimumSize(QSize(80, 80))
-        self.label_2.setMaximumSize(QSize(80, 80))
+        self.label_2.setMinimumSize(QSize(100, 100))
+        self.label_2.setMaximumSize(QSize(100, 100))
         self.label_2.setStyleSheet("background-color: rgbaa(0, 0, 0,0%);\n"
 "border-style: outset;\n"
 "border-width: 2px;\n"
@@ -2151,8 +2165,8 @@ class MainWindow(QMainWindow):
     def update_boss_time(self, boss_name):
         now_time = datetime.datetime.now()
         respawn_time = self.default.boss_list_up_time[boss_name]
-        now_time = now_time + datetime.timedelta(seconds=respawn_time)
-        now_time = now_time.strftime("%Y/%m/%d_%H:%M:%S")
+        now_time = now_time + datetime.timedelta(seconds=respawn_time + 60)
+        now_time = now_time.strftime("%Y/%m/%d_%H:%M:00")
         self.database.update_mongodb_data(boss_name, now_time)
         self.boss_time[boss_name] = now_time
     def create_widget_for_boss_timer(self):
@@ -2214,6 +2228,7 @@ class MainWindow(QMainWindow):
                 break
             boss_name = bos_times[deneme_cont][0]
             boss_time = bos_times[deneme_cont][1]
+            reel_boss_time = str(boss_time)
 
             #sadece saati karşılaştırır
             boss_time_saat = boss_time.strftime("%H:%M:%S")
@@ -2290,6 +2305,7 @@ class MainWindow(QMainWindow):
             time = datetime.datetime.strptime(time, '%Y/%m/%d_%H:%M:%S')
             sorted_boss_time[i] = time
         sorted_boss_time = sorted(sorted_boss_time.items(), key=lambda x: x[1])
+
         if limit != None:
             return sorted_boss_time[:limit]
         else:
