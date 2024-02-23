@@ -490,7 +490,7 @@ background-color: #FAEED1;
 </string>
                </property>
                <property name="currentIndex">
-                <number>4</number>
+                <number>5</number>
                </property>
                <widget class="QWidget" name="login_page">
                 <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1608,6 +1608,13 @@ background-color: #FAEED1;
                          </property>
                         </widget>
                        </item>
+                       <item>
+                        <widget class="QPushButton" name="result_page">
+                         <property name="text">
+                          <string>SONUC EKRANI</string>
+                         </property>
+                        </widget>
+                       </item>
                       </layout>
                      </widget>
                     </item>
@@ -1618,6 +1625,64 @@ background-color: #FAEED1;
                </widget>
                <widget class="QWidget" name="boss_timer_page">
                 <layout class="QVBoxLayout" name="verticalLayout_25">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QFrame" name="frame_36">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_25">
+                    <item alignment="Qt::AlignLeft">
+                     <widget class="QCheckBox" name="minimize">
+                      <property name="styleSheet">
+                       <string notr="true"> QCheckBox::indicator {
+            width: 40px;
+            height: 20px;
+        }
+
+        QCheckBox::indicator:checked {
+            background-color: #4184ff;
+            border-radius: 10px;
+        }
+
+        QCheckBox::indicator:unchecked {
+            background-color: #e3e3e3;
+            border-radius: 10px;
+        }</string>
+                      </property>
+                      <property name="text">
+                       <string>MINIMIZE</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item alignment="Qt::AlignLeft">
+                     <widget class="QCheckBox" name="api_or_dc">
+                      <property name="styleSheet">
+                       <string notr="true"> QCheckBox::indicator {
+            width: 40px;
+            height: 20px;
+        }
+
+        QCheckBox::indicator:checked {
+            background-color: #4184ff;
+            border-radius: 10px;
+        }
+
+        QCheckBox::indicator:unchecked {
+            background-color: #e3e3e3;
+            border-radius: 10px;
+        }</string>
+                      </property>
+                      <property name="text">
+                       <string>DATABASE</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QScrollArea" name="scrollArea">
                    <property name="widgetResizable">
@@ -1628,8 +1693,8 @@ background-color: #FAEED1;
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>793</width>
-                      <height>558</height>
+                      <width>80</width>
+                      <height>28</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_26">

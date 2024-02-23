@@ -1,31 +1,25 @@
-import cv2 
-import pytesseract
-import pyautogui
-from PIL import Image
+import sys
+from PyQt5.QtWidgets import (QApplication, QLabel, QWidget)
 
-kayit_adresi = "C:/Users/trforever/Documents/GitHub/chromerivals_makro_/image/"
 
-def take_screenshot(ek_adi = "P"):
-    Screenshot = pyautogui.screenshot()
-    Screenshot.save(kayit_adresi + "screenshot.png")
-    crop_image(kayit_adresi, (0, 0, 100, 100), 'cropped.png',ek_adi)
-def crop_image(image_path, coords, saved_location, ek_adi = "P"):
-    image_obj = Image.open(image_path + "screenshot.png")
-    cropped_image = image_obj.crop(coords)
-    cropped_image.save(image_path + "cropped_.png")
-    image_to_string(image_path + "cropped_.png",ek_adi)
-def image_to_string(image_path,ek_adi = "P"):
-    image = cv2.imread(image_path)
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    text = pytesseract.image_to_string(image)
-    print(text)
-    if ek_adi == "P":
-        pass
-    else:
-        pass
+class MouseTracker(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+        self.setMouseTracking(True)
 
-    return text
+    def initUI(self):
+        self.setGeometry(300, 300, 300, 200)
+        self.setWindowTitle('Mouse Tracker')
+        self.label = QLabel(self)
+        self.label.resize(200, 40)
+        self.show()
+
+    def mouseMoveEvent(self, event):
+        self.label.setText('Mouse coords: ( %d : %d )' % (event.x(), event.y()))
+
 
 if __name__ == '__main__':
-    bulunan_ek = take_screenshot()
-    print(bulunan_ek)
+    app = QApplication(sys.argv)
+    ex = MouseTracker()
+    sys.exit(app.exec_())

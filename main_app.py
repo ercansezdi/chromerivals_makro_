@@ -13,7 +13,7 @@
 import os 
 
 def compare_code():
-    path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_"
+    path = "C:\\Users\\ercan\\OneDrive\\Documents\\GitHub\\chromerivals_makro_"
     uic_path = "pyuic5.exe -o {}test.py {}untitled.ui".format(path+"\\icons\\",path+"\\icons\\")
     qrc_path = "pyrcc5.exe -o {}new_qrc_rc.py {}new_qrc.qrc".format(path+"\\icons\\",path+"\\icons\\")
 
@@ -49,18 +49,25 @@ import sqlite3
 from random import randint
 from time import strftime
 import requests
+import discord
+import pytesseract
+import pyautogui
+
+
+crystal_hours = {"vatallus": "0000/00/00_00:00:00", "phillon": "0000/00/00_00:00:00", "g-ark": "0000/00/00_00:00:00"}
 
 class defaults():
     def __init__(self):
         self.api_key = "Gork3m-Player-Z5X96djv"
         self.istek_url = "https://api.chromerivals.net/"
         self.uri = "mongodb+srv://ercansezdizero:gSYctsmB1GRcSjjd@cluster0.yvcr1u2.mongodb.net/?retryWrites=true&w=majority"
+        self.discord_token = "MTIwNTgxOTU3NjI3MzczMTYzNA.G-9p4T.7q9_u2uzObNmPNU_yJwXM_GhUQuDzy3nUiFT2U"
         #current path
         self.path = os.getcwd()
-        # self.save_path = self.path + "\\file\\"
-        # self.save_db_path = self.path + "\\db\\"
-        self.save_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\file\\"
-        self.save_db_path = "C:\\Users\\trforever\\Documents\\GitHub\\chromerivals_makro_\\db\\"
+        # self.save_path = self.path + "\\_internal\\file\\"
+        # self.save_db_path = self.path + "\\_internal\\db\\"
+        self.save_path = "C:\\Users\\ercan\\OneDrive\\Documents\\GitHub\\chromerivals_makro_\\file\\"
+        self.save_db_path = "C:\\Users\\ercan\\OneDrive\\Documents\\GitHub\\chromerivals_makro_\\db\\"
         self.bosses_ids = {"764182069386432500":"Hornian Queen","761944773358538800":"Mountain Sage","763119997668053000":"Messenger","764588735659528200":"Pathos","761944773417259000":"Prog. Military Base","764588486207492100":"Energy Core","763156516252438500":"Shirne","764588735747608600":"Nipar Bridge","764182069545816000":"Quetzalcoatl","764588735781163000":"Gryphon","764199142942593000":"Rock Emperor","764111152580939800":"Ordin","764273742804176900":"Azimuth","763156515245805600":"Egma Schill","764182736305934300":"Skadi","762916803910324200":"Gigantic God","761950599683002400":"Bishop Black","762284072524337200":"Bishop Green","761950599590727700":"Bishop Blue","761950599724945400":"Bishop Red","764182736435957800":"Sekhmete","764280926703210500":"Black Widow","764182736767307800":"Echelon","7641827367043936000":"Guardian of Vatallus","762172289146966000":"RM-230","762284072566280200":"Eater","762284072604028900":"Death Worm","762284072750829600":"NGC Calcani","762284072692109300":"Overlord-01","762284072889241600":"Saleos","762284072956350500":"Tetzlica","762284073019265000":"Overhead Completion","762172820695306200":"Lord Kreacia","762284072637583400":"NGC Mothership"}
         self.weapon_re_attachment = ["Legend", "Bio", "Meteo", "Ultra", "Deus", "Trekki", "Tachyon", "Terra", "Solace", "Attack", "Silence", "Faith", "Faithful", "Elite", "Chimera", "Epic", "Ether", "Amazing", "Criminal", "Shooting-Star", "Judgement", "Dispel", "Glacial", "Nova", "Universe", "Double", "Hell", "Flare", "Bite", "Hera"]
         self.armor_eva_attachment  = ["Ose", "Critter", "Macha", "Maurader", "Metatron", "Methadrone", "Miasma", "Origin", "Orobas", "Caina", "Tyranny"]
@@ -384,7 +391,89 @@ class database():
             for j in i:
                 if j == "firmware":
                     return i[j]
-        
+class DicordClient(discord.Client):
+    durum = False
+    async def on_ready(self):
+        self.durum = True
+        await self.history()
+
+
+
+    async def on_message(self, message):
+        # we do not want the bot to reply to itself
+        if message.author.id == self.user.id:
+            return
+        chanel_id = 1196510123221336064
+        if chanel_id == message.channel.id:
+            # if message is embed
+            try:
+                embeds = message.embeds # return list of embeds
+                for embed in embeds:
+                    dictt = embed.to_dict()
+                timestamp = dictt['timestamp'] #'timestamp': '2024-02-12T04:25:29+00:00'
+                reel_timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S+00:00')
+                reel_timestamp = reel_timestamp + datetime.timedelta(hours=4) + datetime.timedelta(minutes=1)
+                acilabilen = ["G-ARK", "Vatallus", "Phillon"]
+                acilan = dictt['author']['name'] # 'name': 'Phillon Trigger Event'
+                for acilabilen_ in acilabilen:
+                    if acilabilen_ in acilan:
+                        acilan = acilabilen_
+                #.strftime("%Y/%m/%d_%H:%M:00")#2024/02/09_12:11:00"
+                reel_timestamp = reel_timestamp.strftime("%Y/%m/%d_%H:%M:00")#2024/02/09_12:11:00"
+                global crystal_hours
+                if acilan == "G-ARK":
+                    crystal_hours["g-ark"] = reel_timestamp
+                elif acilan == "Vatallus":
+                    crystal_hours["vatallus"] = reel_timestamp
+                elif acilan == "Phillon":
+                    crystal_hours["phillon"] = reel_timestamp
+            except:
+                pass
+            if  'delete' in message.content:
+                message_ = message.content
+                delete_num = int(message_.split(' ')[1])
+                async for msg in message.channel.history(limit=delete_num):
+                    await msg.delete()
+
+    async def history(self):
+        global crystal_hours
+        crystal_hours = {"vatallus": 0, "phillon": 0, "g-ark": 0}
+        channel_id = 1196510123221336064
+        channel = self.get_channel(channel_id)
+        async for msg in channel.history(limit=10):
+            embeds = msg.embeds # return list of embeds
+            for embed in embeds:
+                dictt = embed.to_dict()
+            try:
+                timestamp = dictt['timestamp'] #'timestamp': '2024-02-12T04:25:29+00:00'
+                reel_timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S+00:00')
+                # + datetime.timedelta(hours=3)
+                reel_timestamp = reel_timestamp + datetime.timedelta(hours=4) + datetime.timedelta(minutes=1)
+
+                acilabilen = ["G-ARK", "Vatallus", "Phillon"]
+                acilan = dictt['author']['name'] # 'name': 'Phillon Trigger Event'
+                for acilabilen_ in acilabilen:
+                    if acilabilen_ in acilan:
+                        acilan = acilabilen_
+                reel_timestamp = reel_timestamp.strftime("%Y/%m/%d_%H:%M:00")#2024/02/09_12:11:00"
+                if acilan == "G-ARK":
+                    crystal_hours["g-ark"] = reel_timestamp
+                elif acilan == "Vatallus":
+                    crystal_hours["vatallus"] = reel_timestamp
+                elif acilan == "Phillon":
+                    crystal_hours["phillon"] = reel_timestamp
+                
+                if crystal_hours["g-ark"] != 0 and crystal_hours["vatallus"] != 0 and crystal_hours["phillon"] != 0:
+                    break
+            except:
+                pass
+            
+
+            
+            
+    def return_durum(self):
+        return self.durum
+  
 class MainWindow(QMainWindow):
     def __init__(self):
         super(QMainWindow,self).__init__()
@@ -394,6 +483,7 @@ class MainWindow(QMainWindow):
         #full screen
         # self.showMaximized()
         self.applicatin_version = "v102"
+        self.ui.baslik.setText("CHROMERIVALS MAKRO" + " " + self.applicatin_version)
         self.setWindowIcon(QIcon(":/new/chromerivals_logo.png"))
         self.setWindowTitle("Chromerivals Makro")
         self.default = defaults()
@@ -402,6 +492,10 @@ class MainWindow(QMainWindow):
         # self.create_database()
         self.headers = {'accept': '*/*',
                     'Cr-Api-Key': self.default.api_key,}
+    
+
+
+        
         
         self.ui.show_boss.clicked.connect(partial(self.ui.stackedWidget.setCurrentIndex, 1))
         self.ui.show_boss.clicked.connect(lambda: self.open_boss_page())
@@ -432,17 +526,13 @@ class MainWindow(QMainWindow):
         self.ui.s_silme_ata.clicked.connect(lambda: self.set_s_silme_macro())
         self.ui.start_attachment.clicked.connect(lambda: self.start_attachment())
         self.ui.stop_macro.clicked.connect(lambda: self.stop_all_macro())
-
-
         self.ui.boss_timer.clicked.connect(lambda: self.open_boss_timer())
-
+        self.ui.api_or_dc.setText("DATABASE")
+        self.ui.api_or_dc.clicked.connect(lambda: self.open_api_or_dc())
+        self.ui.minimize.clicked.connect(lambda: self.minimize_maximize())
 
         self.ui.chart.hide()
         self.ui.label_6.hide()
-        """
-        self.get_kills(filter = None ) -- filter verilirse sadece o isimdeki killleri getirir
-        """
-        
         self.setup_for_app()
         self.get_news()
         self.ui.stackedWidget.setCurrentIndex(0)
@@ -460,7 +550,21 @@ class MainWindow(QMainWindow):
 
         # if self.database.permission_for_ask():
         #     self.ask_password()
-
+    def open_api_or_dc(self):
+        if self.ui.api_or_dc.isChecked():
+            self.ui.api_or_dc.setText("DISCORD ")
+            self.guncelleme_secenek = "DISCORD"
+            global crystal_hours
+            self.boss_time["G-ARK Crystal"] = crystal_hours["g-ark"]
+            self.boss_time["Habitat Crystal"] = crystal_hours["phillon"]
+            self.boss_time["Robbenia Crystal"] = crystal_hours["vatallus"]
+        else:
+            self.ui.api_or_dc.setText("DATABASE")
+            self.guncelleme_secenek = "DATABASE"
+            self.boss_time = self.database.get_mongodb_data()
+    def minimize_maximize(self):
+        self.hide()
+        self.create_widget_for_boss_timer()
     def close_info_page(self):
         self.ui.frame_10.hide()
         self.ui.frame_7.hide()
@@ -795,9 +899,20 @@ class MainWindow(QMainWindow):
 
         QTimer.singleShot(100, self.start_attachment_now)
     def gelen_ek(self):
+        path = "C://users//ercan//OneDrive//Documents//GitHub//chromerivals_makro_//image//cropped.png"
+
         #resmi al, kaydet, oku, sil return et
 
-        return self.default.weapon_attack_attachment[randint(0, len(self.default.weapon_attack_attachment) - 1)]
+
+        pyautogui.screenshot(path,region=(0,0,300,400))
+
+
+        pytesseract.pytesseract.tesseract_cmd = r'C://Program Files//Tesseract-OCR//tesseract.exe'
+        tesss = pytesseract.image_to_string(Image.open(path ), lang = 'eng')
+        retu = tesss.split(" ")[1]
+        retu = retu.split("(")[0]
+        return retu
+        # return self.default.weapon_attack_attachment[randint(0, len(self.default.weapon_attack_attachment) - 1)]
 
     def start_macro_for_attachment(self,macro):
         try:
@@ -953,7 +1068,6 @@ class MainWindow(QMainWindow):
         self.kayit = True
         self.update_key = name
         # self.kayit_key = None
-        print(name)
         if name == "start":
             self.ui.start_record_macro.setText("Start Record Macro ({})".format("Waiting..."))
         elif name == "stop":
@@ -1817,6 +1931,7 @@ class MainWindow(QMainWindow):
         self.attachment_p_silme_macro = None
         self.attachment_s_silme_macro = None
         self.stop = False
+        self.guncelleme_secenek = "DATABASE"
     def clear_slash(self, name):
         word = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o", "p","q","r","s","t","u","v","w","x","y","z"]
         for w in word:
@@ -2035,8 +2150,6 @@ class MainWindow(QMainWindow):
             self.ui.verticalLayout_26.addWidget(frame)
         QTimer.singleShot(100, self.update_boss_timer_table)
         QTimer.singleShot(100, self.check_boss_time)
-        self.create_widget_for_boss_timer()
-        # self.random_update_all()
     def check_boss_time(self):
         self.boss_time = self.database.get_mongodb_data()
         QTimer.singleShot(60000, self.check_boss_time)
@@ -2045,7 +2158,11 @@ class MainWindow(QMainWindow):
         for i in range(0,uzunluk):
             time_ = self.boss_time[self.default.mongodb_boss_list[i]]
             now = datetime.datetime.now()
-            time = datetime.datetime.strptime(time_, '%Y/%m/%d_%H:%M:%S')
+            try:
+                time = datetime.datetime.strptime(time_, '%Y/%m/%d_%H:%M:%S')
+            except:
+                print(time_)
+                time = datetime.datetime.strptime("2021/01/01_00:00:00", '%Y/%m/%d_%H:%M:%S')
             reel_timex = str(time_)
             reel_timex = reel_timex.split("_")
             reel_timex = "[  "    + reel_timex[0] + "  " + reel_timex[1] + "  ]"
@@ -2170,12 +2287,10 @@ class MainWindow(QMainWindow):
         self.database.update_mongodb_data(boss_name, now_time)
         self.boss_time[boss_name] = now_time
     def create_widget_for_boss_timer(self):
-
         self.boss_timer_widget = QWidget()
         self.boss_timer_widget.setStyleSheet("background-color: rgba(255, 255, 255,90);")
         self.boss_timer_widget.setObjectName("boss_timer_widget")
         self.boss_timer_widget.resize(400, 200)
-        #sol üst köşede olmasını sağlar
         self.boss_timer_widget.move(0, 0)
         self.boss_timer_widget.setMinimumSize(QtCore.QSize(400, 200))
         self.boss_timer_widget.setMaximumSize(QtCore.QSize(400, 200))
@@ -2183,12 +2298,9 @@ class MainWindow(QMainWindow):
         self.boss_timer_widget.setWindowIcon(QIcon(":/new/chromerivals_logo.png"))
         self.boss_timer_widget.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint  | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
         self.boss_timer_widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-
-        #create layout
         self.boss_timer_layout = QVBoxLayout()
         self.boss_timer_layout.setObjectName("boss_timer_layout")
         self.boss_timer_widget.setLayout(self.boss_timer_layout)
-        #create table
         self.boss_timer_table = QTableWidget()
         self.boss_timer_table.setObjectName("boss_timer_table")
         self.boss_timer_table.setStyleSheet("background-color: rgb(255, 0, 0,0); color: rgb(255,255,255); font: 700 12pt \"Segoe UI\";")
@@ -2200,26 +2312,27 @@ class MainWindow(QMainWindow):
         self.boss_timer_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.boss_timer_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.boss_timer_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        # no top header
         self.boss_timer_table.verticalHeader().setVisible(False)
         self.boss_timer_table.horizontalHeader().setVisible(False)
         self.boss_timer_table.setSelectionMode(QAbstractItemView.NoSelection)
         self.boss_timer_layout.addWidget(self.boss_timer_table)
-        #set transparency
         self.boss_timer_widget.setWindowOpacity(0.5)
 
+        def boss_timer_closed(self):
+            window.show()
+        self.boss_timer_widget.closeEvent = boss_timer_closed
         self.boss_timer_widget.show()
 
-             
+        
+        
 
-        QTimer.singleShot(100, self.create_widget_for_boss_timer_updater)
+        QTimer.singleShot(100, self.create_widget_for_boss_timer_updater) ###########################
     def create_widget_for_boss_timer_updater(self):
         bos_times = self.get_boss_times_sorted()
         self.boss_timer_table.setRowCount(5)
         deneme_cont = 0
         added_bos_count = 0 
         ekle_5 = True
-        #clear self.boss_timer_table
         for i in range(0,5):
             self.boss_timer_table.setItem(i, 0, QTableWidgetItem(""))
             self.boss_timer_table.setItem(i, 1, QTableWidgetItem(""))
@@ -2229,19 +2342,15 @@ class MainWindow(QMainWindow):
             boss_name = bos_times[deneme_cont][0]
             boss_time = bos_times[deneme_cont][1]
             reel_boss_time = str(boss_time)
-
-            #sadece saati karşılaştırır
             boss_time_saat = boss_time.strftime("%H:%M:%S")
             boss_time_date = boss_time.strftime("%Y/%m/%d")
             now_time = datetime.datetime.now()
             now_time_saat = now_time.strftime("%H:%M:%S")
             now_time_date = now_time.strftime("%Y/%m/%d")
-            #zamana çevir
             boss_time_saat = datetime.datetime.strptime(boss_time_saat, '%H:%M:%S')
             now_time_saat = datetime.datetime.strptime(now_time_saat, '%H:%M:%S')
             boss_time_date = datetime.datetime.strptime(boss_time_date, '%Y/%m/%d') 
             now_time_date = datetime.datetime.strptime(now_time_date, '%Y/%m/%d')
-            
             time = boss_time_saat - now_time_saat
             if boss_time_saat > now_time_saat and ekle_5 and boss_time_date == now_time_date:
                 time = time.seconds
@@ -2250,7 +2359,6 @@ class MainWindow(QMainWindow):
                 self.boss_timer_table.setItem(added_bos_count, 1, QTableWidgetItem(time))
                 added_bos_count += 1
             else:
-                #zaman geçmesi sadece 10 saniye ise ekle
                 gecen_saniye = now_time_saat - boss_time_saat
                 saat = gecen_saniye.seconds // 3600
                 dakika = (gecen_saniye.seconds % 3600) // 60
@@ -2263,20 +2371,16 @@ class MainWindow(QMainWindow):
                     self.boss_timer_table.setItem(added_bos_count, 0, QTableWidgetItem(boss_name))
                     self.boss_timer_table.setItem(added_bos_count, 1, QTableWidgetItem(time))
                     added_bos_count += 1
-
             if not ekle_5:
                 time = time.seconds
                 time = self.seconds_to_time(time)[0]
                 self.boss_timer_table.setItem(added_bos_count, 0, QTableWidgetItem(boss_name))
                 self.boss_timer_table.setItem(added_bos_count, 1, QTableWidgetItem(time))
                 added_bos_count += 1
-
             deneme_cont += 1
             if deneme_cont > len(bos_times):
                 if added_bos_count == 0:
-                    # ekle_5 = False
                     deneme_cont = 0
-                
                 break
         QTimer.singleShot(100, self.create_widget_for_boss_timer_updater)
     def compare_time(self, boss_time, now_time):
@@ -2300,7 +2404,9 @@ class MainWindow(QMainWindow):
         now_timee = now_timee.strftime("%S")
         if int(now_timee) == 0:
             self.boss_time = self.database.get_mongodb_data()
+ 
         for i in self.boss_time:
+
             time = self.boss_time[i]
             time = datetime.datetime.strptime(time, '%Y/%m/%d_%H:%M:%S')
             sorted_boss_time[i] = time
@@ -2310,10 +2416,19 @@ class MainWindow(QMainWindow):
             return sorted_boss_time[:limit]
         else:
             return sorted_boss_time
+def discord_():
+    discord_token = defaults().discord_token
 
+    intents = discord.Intents.all()
+    intents.message_content = True
+    client = DicordClient(intents=intents)
+    client.run(discord_token)
 if __name__ == "__main__":
+
+    # threading.Thread(target=discord_).start()
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
+
 

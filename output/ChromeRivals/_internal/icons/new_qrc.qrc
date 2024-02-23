@@ -1,0 +1,53 @@
+<RCC>
+  <qresource prefix="new">
+    <file>Habitat Crystal.png</file>
+    <file>Hornian King.png</file>
+    <file>G-ARK Crystal.png</file>
+    <file>Robbenia Crystal.png</file>
+    <file>Azimuth.png</file>
+    <file>Bishop Green.png</file>
+    <file>Black Widow.png</file>
+    <file>Death_Worm.png</file>
+    <file>Echelon.png</file>
+    <file>Egma Schill.png</file>
+    <file>Energy Core.png</file>
+    <file>Gigantic God.png</file>
+    <file>Gryphon.png</file>
+    <file>Guardian of Vatallus.png</file>
+    <file>Hornian Queen.png</file>
+    <file>Messenger.png</file>
+    <file>Mountain Sage.png</file>
+    <file>Nipar Bridge.png</file>
+    <file>Ordin.png</file>
+    <file>Pathos.png</file>
+    <file>Prog. Military Base.png</file>
+    <file>Quetzalcoatl.png</file>
+    <file>RM-230.png</file>
+    <file>Rock Emperor.png</file>
+    <file>Saleos.png</file>
+    <file>Sekhmete.png</file>
+    <file>Shrine.png</file>
+    <file>Skadi.png</file>
+    <file>Tetzlica.png</file>
+    <file>icons8-electrified-cursor-50.png</file>
+    <file>icons8-advanced-search-50.png</file>
+    <file>icons8-security-pass-50.png</file>
+    <file>monster.png</file>
+    <file>pie-chart.png</file>
+    <file>search.png</file>
+    <file>search_all.png</file>
+    <file>information-button.png</file>
+    <file>installation.png</file>
+    <file>team.png</file>
+    <file>icons8-add-link-50.png</file>
+    <file>add_user.png</file>
+    <file>delete_user.png</file>
+    <file>re_user.png</file>
+    <file>icons8-change-user-50.png</file>
+    <file>ev_charge_station.png</file>
+    <file>users.png</file>
+    <file>close.png</file>
+    <file>minimize.png</file>
+    <file>chromerivals_logo.png</file>
+  </qresource>
+</RCC>
